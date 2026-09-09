@@ -21,6 +21,8 @@
 - [ ] На PDP Derecho активен `Derecho`, и активная карточка не является ссылкой.
 - [ ] На PDP Derecho карточка `Izquierdo` ведёт на правильный парный URL.
 - [ ] На PDP Izquierdo активен `Izquierdo`, и ссылка возвращает на правильный товар Derecho.
+- [ ] Пустой paired URL не создаёт кликабельную ссылку; в Theme Editor виден `Configura la URL`.
+- [ ] Paired URL, совпадающий с текущим product URL, не создаёт ссылку на ту же сторону.
 - [ ] Обе SVG-схемы визуально соответствуют подписи стороны при взгляде на диван спереди.
 - [ ] Подпись о способе определения стороны видна на mobile.
 - [ ] Диапазоны равны `180–370 cm` и `100–180 cm`.
@@ -33,15 +35,20 @@
 - [ ] Ссылка открывается в новой вкладке с `rel="noopener"`.
 - [ ] Текст и URL корректно кодируются для пробелов, знаков вопроса, тире и испанских символов.
 
-## Событие и GTM
+## События и GTM
 
+- [ ] `eurofunda:side_switch_click` не возникает при page load.
 - [ ] `eurofunda:fit_whatsapp_click` не возникает при page load.
-- [ ] Один клик вызывает ровно один `Shopify.analytics.publish`.
-- [ ] Payload содержит `product_id`, `variant_id`, `product_handle`, `placement`.
-- [ ] `placement` равен `pdp_below_primary_cta`.
+- [ ] Один клик по неактивной стороне вызывает ровно один `Shopify.analytics.publish` и не задерживает переход.
+- [ ] Side-switch payload содержит `product_id`, `variant_id`, `from_side`, `to_side`, `placement: 'pdp_purchase_area'`, `target_url`.
+- [ ] Проверены оба направления: `right → left` и `left → right`.
+- [ ] Один WhatsApp click вызывает ровно один `Shopify.analytics.publish`.
+- [ ] WhatsApp payload содержит `product_id`, `variant_id`, `product_handle`, `placement: 'pdp_below_primary_cta'`.
+- [ ] Повторная инициализация обоих storefront-обработчиков не удваивает события.
 - [ ] Theme code не делает параллельный прямой `dataLayer.push()`.
 - [ ] Если GTM subscriber подключён, нет второго Custom Pixel/app pixel/theme listener с тем же назначением.
-- [ ] В GTM Preview один Shopify custom event создаёт один `ef_fit_whatsapp_click`.
+- [ ] GTM инициализирован внутри того же Custom Pixel sandbox по поддерживаемой Shopify-схеме, а не только в `theme.liquid`.
+- [ ] В GTM Preview один Shopify custom event создаёт один `ef_side_switch_click` или `ef_fit_whatsapp_click` соответственно.
 
 ## Регрессии темы
 

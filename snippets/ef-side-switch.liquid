@@ -3,14 +3,26 @@
   assign ef_right_label = right_label | default: 'Derecho'
   assign ef_left_label = left_label | default: 'Izquierdo'
   assign ef_opposite_label = opposite_label
+  assign ef_opposite_url = opposite_url
+  assign ef_current_relative_url = product.url
+  assign ef_current_absolute_url = shop.url | append: product.url
+  assign ef_variant = product.selected_or_first_available_variant
+  assign ef_placement = placement | default: 'pdp_purchase_area'
+  assign ef_has_opposite_url = true
+
+  if ef_opposite_url == blank or ef_opposite_url == ef_current_relative_url or ef_opposite_url == ef_current_absolute_url
+    assign ef_has_opposite_url = false
+  endif
 
   if ef_current_side == 'left'
     assign ef_active_label = ef_left_label
     assign ef_other_label = ef_opposite_label | default: ef_right_label
+    assign ef_to_side = 'right'
   else
     assign ef_current_side = 'right'
     assign ef_active_label = ef_right_label
     assign ef_other_label = ef_opposite_label | default: ef_left_label
+    assign ef_to_side = 'left'
   endif
 -%}
 
@@ -30,23 +42,67 @@
         </svg>
         <span class="ef-side-switch__status">Seleccionado</span>
       </div>
-      <a class="ef-side-switch__card" href="{{ opposite_url | escape }}" aria-label="Cambiar al lado {{ ef_other_label | escape }}">
-        <span class="ef-side-switch__label">{{ ef_other_label | escape }}</span>
-        <svg class="ef-side-switch__diagram" viewBox="0 0 96 58" aria-hidden="true" focusable="false">
-          <path d="M86 14H18a8 8 0 0 0-8 8v25a5 5 0 0 0 5 5h16a5 5 0 0 0 5-5V36h45a5 5 0 0 0 5-5V14Z" />
-          <path d="M78 20v9H30v15H18V22h60Z" />
-        </svg>
-        <span class="ef-side-switch__status">Ver modelo</span>
-      </a>
+      {%- if ef_has_opposite_url -%}
+        <a
+          class="ef-side-switch__card"
+          href="{{ ef_opposite_url | escape }}"
+          aria-label="Cambiar al lado {{ ef_other_label | escape }}"
+          data-ef-side-switch
+          data-product-id="{{ product.id }}"
+          data-variant-id="{{ ef_variant.id }}"
+          data-from-side="{{ ef_current_side }}"
+          data-to-side="{{ ef_to_side }}"
+          data-placement="{{ ef_placement | escape }}"
+          data-target-url="{{ ef_opposite_url | escape }}"
+        >
+          <span class="ef-side-switch__label">{{ ef_other_label | escape }}</span>
+          <svg class="ef-side-switch__diagram" viewBox="0 0 96 58" aria-hidden="true" focusable="false">
+            <path d="M86 14H18a8 8 0 0 0-8 8v25a5 5 0 0 0 5 5h16a5 5 0 0 0 5-5V36h45a5 5 0 0 0 5-5V14Z" />
+            <path d="M78 20v9H30v15H18V22h60Z" />
+          </svg>
+          <span class="ef-side-switch__status">Ver modelo</span>
+        </a>
+      {%- else -%}
+        <div class="ef-side-switch__card ef-side-switch__card--unavailable" aria-disabled="true">
+          <span class="ef-side-switch__label">{{ ef_other_label | escape }}</span>
+          <svg class="ef-side-switch__diagram" viewBox="0 0 96 58" aria-hidden="true" focusable="false">
+            <path d="M86 14H18a8 8 0 0 0-8 8v25a5 5 0 0 0 5 5h16a5 5 0 0 0 5-5V36h45a5 5 0 0 0 5-5V14Z" />
+            <path d="M78 20v9H30v15H18V22h60Z" />
+          </svg>
+          <span class="ef-side-switch__status">{% if request.design_mode %}Configura la URL{% else %}No disponible{% endif %}</span>
+        </div>
+      {%- endif -%}
     {%- else -%}
-      <a class="ef-side-switch__card" href="{{ opposite_url | escape }}" aria-label="Cambiar al lado {{ ef_other_label | escape }}">
-        <span class="ef-side-switch__label">{{ ef_other_label | escape }}</span>
-        <svg class="ef-side-switch__diagram" viewBox="0 0 96 58" aria-hidden="true" focusable="false">
-          <path d="M10 14h68a8 8 0 0 1 8 8v25a5 5 0 0 1-5 5H65a5 5 0 0 1-5-5V36H15a5 5 0 0 1-5-5V14Z" />
-          <path d="M18 20v9h48v15h12V22H18Z" />
-        </svg>
-        <span class="ef-side-switch__status">Ver modelo</span>
-      </a>
+      {%- if ef_has_opposite_url -%}
+        <a
+          class="ef-side-switch__card"
+          href="{{ ef_opposite_url | escape }}"
+          aria-label="Cambiar al lado {{ ef_other_label | escape }}"
+          data-ef-side-switch
+          data-product-id="{{ product.id }}"
+          data-variant-id="{{ ef_variant.id }}"
+          data-from-side="{{ ef_current_side }}"
+          data-to-side="{{ ef_to_side }}"
+          data-placement="{{ ef_placement | escape }}"
+          data-target-url="{{ ef_opposite_url | escape }}"
+        >
+          <span class="ef-side-switch__label">{{ ef_other_label | escape }}</span>
+          <svg class="ef-side-switch__diagram" viewBox="0 0 96 58" aria-hidden="true" focusable="false">
+            <path d="M10 14h68a8 8 0 0 1 8 8v25a5 5 0 0 1-5 5H65a5 5 0 0 1-5-5V36H15a5 5 0 0 1-5-5V14Z" />
+            <path d="M18 20v9h48v15h12V22H18Z" />
+          </svg>
+          <span class="ef-side-switch__status">Ver modelo</span>
+        </a>
+      {%- else -%}
+        <div class="ef-side-switch__card ef-side-switch__card--unavailable" aria-disabled="true">
+          <span class="ef-side-switch__label">{{ ef_other_label | escape }}</span>
+          <svg class="ef-side-switch__diagram" viewBox="0 0 96 58" aria-hidden="true" focusable="false">
+            <path d="M10 14h68a8 8 0 0 1 8 8v25a5 5 0 0 1-5 5H65a5 5 0 0 1-5-5V36H15a5 5 0 0 1-5-5V14Z" />
+            <path d="M18 20v9h48v15h12V22H18Z" />
+          </svg>
+          <span class="ef-side-switch__status">{% if request.design_mode %}Configura la URL{% else %}No disponible{% endif %}</span>
+        </div>
+      {%- endif -%}
       <div class="ef-side-switch__card ef-side-switch__card--active" aria-current="true">
         <span class="ef-side-switch__label">{{ ef_active_label | escape }}</span>
         <svg class="ef-side-switch__diagram" viewBox="0 0 96 58" aria-hidden="true" focusable="false">
@@ -60,3 +116,34 @@
 
   <p class="ef-side-switch__note">La orientación se define mirando el sofá de frente.</p>
 </fieldset>
+
+<script>
+  (function () {
+    if (window.__efSideSwitchClickBound) return;
+    window.__efSideSwitchClickBound = true;
+
+    document.addEventListener('click', function (event) {
+      var origin = event.target;
+      if (!origin || typeof origin.closest !== 'function') return;
+
+      var link = origin.closest('[data-ef-side-switch]');
+      if (!link) return;
+      if (!window.Shopify || !Shopify.analytics || typeof Shopify.analytics.publish !== 'function') return;
+
+      try {
+        var published = Shopify.analytics.publish('eurofunda:side_switch_click', {
+          product_id: link.dataset.productId,
+          variant_id: link.dataset.variantId,
+          from_side: link.dataset.fromSide,
+          to_side: link.dataset.toSide,
+          placement: link.dataset.placement || 'pdp_purchase_area',
+          target_url: link.dataset.targetUrl || link.href
+        });
+
+        if (published && typeof published.catch === 'function') {
+          published.catch(function () {});
+        }
+      } catch (error) {}
+    });
+  })();
+</script>

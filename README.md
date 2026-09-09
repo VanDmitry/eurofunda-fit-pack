@@ -2,19 +2,22 @@
 
 Локальный набор артефактов для проверки CRO-гипотезы на выбранной PDP: сделать условия покупки заметнее, дать покупателю самостоятельно выбрать сторону L-дивана и оставить WhatsApp как запасной путь при сомнении по стороне или размеру.
 
+Статус: **Implementation package ready for Shopify dev-store integration and theme-specific QA.**
+
 Пакет не меняет live-сайт, не содержит результатов теста и не считается проверенным в production-теме.
 
 ## Состав
 
 - `snippets/ef-purchase-trust.liquid` — компактная строка оплаты, доставки и гарантий.
-- `snippets/ef-side-switch.liquid` — явный выбор Derecho / Izquierdo без логики по handle.
+- `snippets/ef-side-switch.liquid` — явный выбор Derecho / Izquierdo, безопасный paired URL и click event.
 - `snippets/ef-fit-assistant.liquid` — WhatsApp fallback и click event.
-- `snippets/ef-purchase-assist.liquid` — композиционный fragment для точной интеграции в main product section.
+- `snippets/ef-purchase-assist-styles.liquid` — общие стили для раздельного production-размещения.
+- `snippets/ef-purchase-assist.liquid` — reusable-композиция для standalone section и демонстрационных сценариев.
 - `sections/ef-purchase-assist-section.liquid` — настраиваемая standalone section с preset.
 - `prototypes/custom-liquid-prototype.liquid` — однофайловый быстрый prototype без schema и `section.settings`.
-- `pixels/ef-gtm-subscriber.js` — опциональная подписка Shopify Custom Pixel для существующего GTM.
+- `pixels/ef-gtm-subscriber.js` — подписки Shopify Custom Pixel для существующего GTM-сценария.
 - `mockup/index.html` — самодостаточный локальный макет, не скриншот live-сайта.
-- `scripts/shots.mjs` — автоматические responsive-проверки и три Playwright screenshot.
+- `scripts/shots.mjs` — статические, interaction и responsive-проверки плюс три Playwright screenshot.
 - `docs/integration.md` — варианты внедрения и rollback.
 - `docs/qa-checklist.md` — mobile, tracking и regression QA.
 
@@ -22,7 +25,7 @@
 
 Откройте `mockup/index.html` в браузере. Внешние картинки, шрифты, CDN и сервер не нужны.
 
-## Снять screenshots
+## Запустить проверки и снять screenshots
 
 Из корня пакета:
 
@@ -34,31 +37,44 @@ npm run shots
 
 Если Playwright Chromium не установлен, сценарий автоматически попробует локальный Chrome/Edge; путь можно явно передать через `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH`.
 
-Сценарий проверяет отсутствие горизонтального скролла и минимальный размер интерактивных целей на 375 / 390 / 430 / 1440 px, затем создаёт:
+Проверки охватывают ширины 375 / 390 / 430 / 1440 px, отсутствие горизонтального скролла, targets от 44 px, Liquid/package invariants, оба custom event, отсутствие событий при загрузке и защиту от повторной инициализации. Затем создаются:
 
 - `mockup/shot-mobile-390-first.png` — viewport 390×844, первый экран;
 - `mockup/shot-mobile-390-full.png` — viewport 390×844, full page;
 - `mockup/shot-desktop-1440.png` — viewport 1440×900, full page.
 
-## Выбрать способ внедрения
+## Основной путь интеграции
 
-- Для самой быстрой проверки в неопубликованной теме: Custom Liquid prototype, если main product section поддерживает такой block.
-- Для точного размещения и повторного использования: snippets внутри реальной main product section после изучения её block loop и product form.
-- Для Theme Editor без правки main product section: standalone section, только если позиция между template sections достаточно точна.
+Точное имя price block, buy-buttons block и main product section зависит от темы. Его определяют только после просмотра product section конкретной темы; пакет не вводит выдуманные Eurofunda block IDs.
 
-Standalone section можно перемещать между секциями JSON template, но она не гарантирует место непосредственно внутри product info под Add to Cart. Такое размещение зависит от конкретной темы; универсального безопасного patch без её кода нет.
+Основной production-oriented путь использует две отдельные точки:
+
+1. Подключить `ef-purchase-assist-styles` один раз в фактической product section и рендерить `ef-purchase-trust` непосредственно после существующего price markup — максимально близко к цене.
+2. Рендерить `ef-side-switch` и `ef-fit-assistant` непосредственно после существующих buy buttons / Add to Cart.
+
+Так сохраняется иерархия: цена → trust → Add to Cart → Derecho / Izquierdo → Fit Assistant / WhatsApp. Полные generic-примеры для обеих сторон находятся в `docs/integration.md`.
+
+Standalone section и композиционный `ef-purchase-assist` остаются reusable-вариантом. Они не гарантируют точное размещение внутри product info и не являются основным путём для финального placement.
 
 ## Tracking architecture
 
 ```text
-theme click
+Storefront theme
+  → Shopify.analytics.publish('eurofunda:side_switch_click', payload)
   → Shopify.analytics.publish('eurofunda:fit_whatsapp_click', payload)
-  → optional Shopify Custom Pixel
-  → один GTM dataLayer.push({ event: 'ef_fit_whatsapp_click' })
+Shopify Customer Events / Custom Pixel
+  → analytics.subscribe(...)
+  → window.dataLayer.push(...) внутри того же Custom Pixel sandbox
+GTM
+  → GTM инициализирован внутри Custom Pixel по поддерживаемой Shopify-схеме
 ```
 
-Тема не отправляет событие при page load и не пишет напрямую в `dataLayer`. Custom Pixel подключается только после аудита существующего tracking stack, чтобы не создать дубль.
+Нормализованные события: `ef_side_switch_click` и `ef_fit_whatsapp_click`.
+
+Subscriber не взаимодействует автоматически с произвольным GTM из `theme.liquid`: sandbox Custom Pixel изолирован. Перед установкой нужно проверить существующие theme scripts, Customer Events, app pixels и GTM/GA4/Meta configuration. Если события уже отправляются другим путём, нельзя создавать второй event path.
 
 ## Перед live и rollback
 
 До публикации пройти `docs/qa-checklist.md` на обеих парных PDP и проверить product form, variant picker, cart drawer, sticky CTA и GTM Preview. Для отката удалить добавленный Custom Liquid block, theme-specific render/block или standalone section — в зависимости от выбранного варианта — и повторно проверить purchase flow. Подробности находятся в `docs/integration.md`.
+
+До завершения dev-store и theme-specific QA не проверены реальная тема Eurofunda, точные точки placement, Customer Events магазина, текущий analytics stack, cart drawer / variant logic и preview на реальном Shopify store.

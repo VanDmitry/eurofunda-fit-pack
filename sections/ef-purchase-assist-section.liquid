@@ -10,7 +10,7 @@
   else
     assign ef_opposite_label = section.settings.left_label
   endif
-  assign ef_paired_product_url = section.settings.paired_product_url | default: '/products/funda-de-sofa-esquinero-izquierdo-dark-chocolate'
+  assign ef_paired_product_url = section.settings.paired_product_url
 -%}
 
 <section class="ef-purchase-assist-section ef-purchase-assist-section--{{ section.id }}" aria-label="Ayuda para elegir la funda">
@@ -69,7 +69,7 @@
       "type": "textarea",
       "id": "trust_text",
       "label": "Texto de pago, despacho y garantías",
-      "default": "Hasta 6 cuotas sin interés · Envío gratis sobre $80.000 · 1 año por fallas de fabricación · 10 días de satisfacción según condiciones."
+      "default": "Hasta 6 cuotas sin interés · Envío gratis sobre $80.000 en Chile continental · 1 año por fallas de fabricación · 10 días de satisfacción según condiciones."
     },
     {
       "type": "header",
@@ -95,6 +95,10 @@
       "type": "url",
       "id": "paired_product_url",
       "label": "URL del producto del lado opuesto"
+    },
+    {
+      "type": "paragraph",
+      "content": "Obligatorio para activar el enlace. Si queda vacío o apunta al producto actual, la opción opuesta no será clicable."
     },
     {
       "type": "text",

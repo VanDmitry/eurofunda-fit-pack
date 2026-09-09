@@ -19,7 +19,7 @@
 
 <div class="ef-purchase-assist" data-ef-purchase-assist>
   <div class="ef-purchase-trust" aria-label="Pago, despacho y garantías">
-    <p class="ef-purchase-trust__line">Hasta 6 cuotas sin interés · Envío gratis sobre $80.000 · 1 año por fallas de fabricación · 10 días de satisfacción según condiciones.</p>
+    <p class="ef-purchase-trust__line">Hasta 6 cuotas sin interés · Envío gratis sobre $80.000 en Chile continental · 1 año por fallas de fabricación · 10 días de satisfacción según condiciones.</p>
   </div>
 
   <fieldset class="ef-side-switch">
@@ -42,6 +42,13 @@
         class="ef-side-switch__card"
         href="https://eurofunda.cl/products/funda-de-sofa-esquinero-izquierdo-dark-chocolate"
         aria-label="Cambiar al lado Izquierdo"
+        data-ef-side-switch
+        data-product-id="{{ product.id }}"
+        data-variant-id="{{ ef_proto_variant.id }}"
+        data-from-side="right"
+        data-to-side="left"
+        data-placement="pdp_purchase_area"
+        data-target-url="https://eurofunda.cl/products/funda-de-sofa-esquinero-izquierdo-dark-chocolate"
       >
         <span class="ef-side-switch__label">Izquierdo</span>
         <svg class="ef-side-switch__diagram" viewBox="0 0 96 58" aria-hidden="true" focusable="false">
@@ -266,6 +273,37 @@
     }
   }
 </style>
+
+<script>
+  (function () {
+    if (window.__efSideSwitchClickBound) return;
+    window.__efSideSwitchClickBound = true;
+
+    document.addEventListener('click', function (event) {
+      var origin = event.target;
+      if (!origin || typeof origin.closest !== 'function') return;
+
+      var link = origin.closest('[data-ef-side-switch]');
+      if (!link) return;
+      if (!window.Shopify || !Shopify.analytics || typeof Shopify.analytics.publish !== 'function') return;
+
+      try {
+        var published = Shopify.analytics.publish('eurofunda:side_switch_click', {
+          product_id: link.dataset.productId,
+          variant_id: link.dataset.variantId,
+          from_side: link.dataset.fromSide,
+          to_side: link.dataset.toSide,
+          placement: link.dataset.placement || 'pdp_purchase_area',
+          target_url: link.dataset.targetUrl || link.href
+        });
+
+        if (published && typeof published.catch === 'function') {
+          published.catch(function () {});
+        }
+      } catch (error) {}
+    });
+  })();
+</script>
 
 <script>
   (function () {
