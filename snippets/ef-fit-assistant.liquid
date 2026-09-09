@@ -1,0 +1,70 @@
+{%- liquid
+  assign ef_whatsapp_number = whatsapp_number | default: '+56 2 2583 0907'
+  assign ef_whatsapp_digits = ef_whatsapp_number | replace: '+', '' | replace: ' ', '' | replace: '-', '' | replace: '(', '' | replace: ')', ''
+  assign ef_heading = fit_heading | default: '¿Aún tienes dudas con la medida o el lado?'
+  assign ef_body = fit_body | default: 'Envíanos una foto de tu sofá por WhatsApp y te ayudamos a confirmar el modelo antes de comprar.'
+  assign ef_main_range = main_range | default: '180–370 cm'
+  assign ef_chaise_range = chaise_range | default: '100–180 cm'
+  assign ef_placement = placement | default: 'pdp_below_primary_cta'
+  assign ef_product_url = shop.url | append: product.url
+  assign ef_variant = product.selected_or_first_available_variant
+  capture ef_whatsapp_message
+    echo 'Hola, tengo dudas sobre el lado o la medida de '
+    echo product.title
+    echo ': '
+    echo ef_product_url
+    echo '. ¿Me ayudan a confirmar el modelo antes de comprar?'
+  endcapture
+-%}
+
+<aside class="ef-fit-assistant" aria-label="Ayuda antes de comprar">
+  <p class="ef-fit-assistant__eyebrow">Ayuda antes de comprar</p>
+  <h3 class="ef-fit-assistant__heading">{{ ef_heading | escape }}</h3>
+  <p class="ef-fit-assistant__body">{{ ef_body | escape }}</p>
+
+  <ul class="ef-fit-assistant__measurements" aria-label="Rangos de medidas compatibles">
+    <li class="ef-fit-assistant__measurement">Tramo principal: {{ ef_main_range | escape }}</li>
+    <li class="ef-fit-assistant__measurement">Chaise longue: {{ ef_chaise_range | escape }}</li>
+  </ul>
+
+  <a
+    class="ef-fit-assistant__cta"
+    href="https://wa.me/{{ ef_whatsapp_digits | escape }}?text={{ ef_whatsapp_message | strip_newlines | strip | url_encode }}"
+    target="_blank"
+    rel="noopener"
+    data-ef-fit-whatsapp
+    data-product-id="{{ product.id }}"
+    data-variant-id="{{ ef_variant.id }}"
+    data-product-handle="{{ product.handle | escape }}"
+    data-placement="{{ ef_placement | escape }}"
+  >
+    Confirmar por WhatsApp
+  </a>
+</aside>
+
+<script>
+  (function () {
+    if (window.__efFitAssistantClickBound) return;
+    window.__efFitAssistantClickBound = true;
+
+    document.addEventListener('click', function (event) {
+      var origin = event.target;
+      if (!origin || typeof origin.closest !== 'function') return;
+
+      var link = origin.closest('[data-ef-fit-whatsapp]');
+      if (!link) return;
+      if (!window.Shopify || !Shopify.analytics || typeof Shopify.analytics.publish !== 'function') return;
+
+      var published = Shopify.analytics.publish('eurofunda:fit_whatsapp_click', {
+        product_id: link.dataset.productId,
+        variant_id: link.dataset.variantId,
+        product_handle: link.dataset.productHandle,
+        placement: link.dataset.placement || 'pdp_below_primary_cta'
+      });
+
+      if (published && typeof published.catch === 'function') {
+        published.catch(function () {});
+      }
+    });
+  })();
+</script>

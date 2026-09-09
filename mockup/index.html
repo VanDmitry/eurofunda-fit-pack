@@ -1,0 +1,493 @@
+<!doctype html>
+<html lang="es-CL">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Mockup local de asistencia de compra para la PDP de Eurofunda." />
+    <title>Eurofunda — mockup de asistencia de compra</title>
+    <style>
+      .ef-page {
+        --ef-ink: #20221f;
+        --ef-muted: #646960;
+        --ef-line: #d8d9d4;
+        --ef-soft: #f4f3ee;
+        --ef-panel: #faf9f6;
+        --ef-accent: #26352b;
+        --ef-focus: #075fcc;
+        background: #ffffff;
+        color: var(--ef-ink);
+        font-family: Arial, Helvetica, sans-serif;
+        margin: 0;
+      }
+
+      .ef-page *,
+      .ef-page *::before,
+      .ef-page *::after {
+        box-sizing: border-box;
+      }
+
+      .ef-page__notice {
+        background: #20221f;
+        color: #ffffff;
+        font-size: 0.75rem;
+        letter-spacing: 0.02em;
+        line-height: 1.35;
+        margin: 0;
+        padding: 0.5rem 1rem;
+        text-align: center;
+      }
+
+      .ef-header {
+        align-items: center;
+        border-bottom: 1px solid var(--ef-line);
+        display: flex;
+        min-height: 3.5rem;
+        padding: 0.75rem 1rem;
+      }
+
+      .ef-header__brand {
+        font-size: 1rem;
+        font-weight: 800;
+        letter-spacing: 0.18em;
+      }
+
+      .ef-product {
+        margin-inline: auto;
+        max-width: 78rem;
+      }
+
+      .ef-gallery {
+        background: #edeae4;
+        min-height: 13rem;
+        padding: 1rem;
+      }
+
+      .ef-gallery__stage {
+        align-items: center;
+        background: linear-gradient(145deg, #3a2c27, #785f52);
+        border-radius: 0.75rem;
+        color: #ffffff;
+        display: flex;
+        height: 11rem;
+        justify-content: center;
+        text-align: center;
+      }
+
+      .ef-gallery__placeholder {
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 999px;
+        color: #3a2c27;
+        font-size: 0.8125rem;
+        font-weight: 700;
+        padding: 0.5rem 0.75rem;
+      }
+
+      .ef-gallery__thumbs {
+        display: none;
+      }
+
+      .ef-product__info {
+        padding: 1.125rem 1rem 2.5rem;
+      }
+
+      .ef-product__sku {
+        color: var(--ef-muted);
+        font-size: 0.75rem;
+        letter-spacing: 0.08em;
+        margin: 0 0 0.375rem;
+        text-transform: uppercase;
+      }
+
+      .ef-product__title {
+        font-size: clamp(1.45rem, 7vw, 2.25rem);
+        letter-spacing: -0.025em;
+        line-height: 1.12;
+        margin: 0;
+      }
+
+      .ef-product__price {
+        font-size: 1.35rem;
+        font-weight: 750;
+        margin: 0.75rem 0;
+      }
+
+      .ef-purchase-trust {
+        background: var(--ef-soft);
+        border-radius: 0.625rem;
+        color: var(--ef-muted);
+        margin-block-end: 0.875rem;
+        padding: 0.7rem 0.8rem;
+      }
+
+      .ef-purchase-trust__line {
+        font-size: 0.8125rem;
+        line-height: 1.45;
+        margin: 0;
+      }
+
+      .ef-product__add {
+        align-items: center;
+        background: var(--ef-accent);
+        border: 1px solid var(--ef-accent);
+        border-radius: 0.5rem;
+        color: #ffffff;
+        cursor: pointer;
+        display: flex;
+        font-size: 1rem;
+        font-weight: 750;
+        inline-size: 100%;
+        justify-content: center;
+        min-height: 3.25rem;
+        padding: 0.75rem 1rem;
+      }
+
+      .ef-purchase-assist {
+        margin-block-start: 1.25rem;
+      }
+
+      .ef-side-switch {
+        border: 0;
+        margin: 0;
+        min-inline-size: 0;
+        padding: 0;
+      }
+
+      .ef-side-switch__legend {
+        display: block;
+        inline-size: 100%;
+        margin-block-end: 0.75rem;
+        padding: 0;
+      }
+
+      .ef-side-switch__eyebrow,
+      .ef-fit-assistant__eyebrow {
+        color: var(--ef-muted);
+        display: block;
+        font-size: 0.75rem;
+        font-weight: 750;
+        letter-spacing: 0.08em;
+        line-height: 1.3;
+        margin: 0 0 0.25rem;
+        text-transform: uppercase;
+      }
+
+      .ef-side-switch__question {
+        display: block;
+        font-size: 1rem;
+        font-weight: 650;
+        line-height: 1.4;
+      }
+
+      .ef-side-switch__options {
+        display: grid;
+        gap: 0.625rem;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .ef-side-switch__card {
+        align-items: center;
+        background: #ffffff;
+        border: 1px solid var(--ef-line);
+        border-radius: 0.75rem;
+        color: var(--ef-ink);
+        display: grid;
+        gap: 0.15rem;
+        justify-items: center;
+        min-height: 7.2rem;
+        padding: 0.65rem;
+        text-align: center;
+        text-decoration: none;
+      }
+
+      .ef-side-switch__card--active {
+        background: var(--ef-soft);
+        border-color: var(--ef-accent);
+        box-shadow: inset 0 0 0 1px var(--ef-accent);
+      }
+
+      .ef-side-switch__label {
+        font-size: 0.9375rem;
+        font-weight: 750;
+      }
+
+      .ef-side-switch__diagram {
+        fill: none;
+        height: 2.5rem;
+        stroke: currentColor;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 2;
+        width: 4.5rem;
+      }
+
+      .ef-side-switch__status {
+        color: var(--ef-muted);
+        font-size: 0.75rem;
+      }
+
+      .ef-side-switch__note {
+        color: var(--ef-muted);
+        font-size: 0.8125rem;
+        line-height: 1.4;
+        margin: 0.6rem 0 0;
+      }
+
+      .ef-fit-assistant {
+        background: var(--ef-soft);
+        border: 1px solid var(--ef-line);
+        border-radius: 0.875rem;
+        margin-block-start: 1.25rem;
+        padding: 1rem;
+      }
+
+      .ef-fit-assistant__heading {
+        font-size: 1.125rem;
+        line-height: 1.35;
+        margin: 0 0 0.45rem;
+      }
+
+      .ef-fit-assistant__body {
+        color: var(--ef-muted);
+        font-size: 0.9375rem;
+        line-height: 1.5;
+        margin: 0;
+      }
+
+      .ef-fit-assistant__measurements {
+        display: grid;
+        gap: 0.25rem;
+        list-style: none;
+        margin: 0.75rem 0;
+        padding: 0;
+      }
+
+      .ef-fit-assistant__measurement {
+        font-size: 0.875rem;
+        line-height: 1.4;
+      }
+
+      .ef-fit-assistant__cta {
+        align-items: center;
+        background: transparent;
+        border: 1px solid var(--ef-accent);
+        border-radius: 0.5rem;
+        color: var(--ef-accent);
+        display: inline-flex;
+        font-size: 0.9375rem;
+        font-weight: 750;
+        justify-content: center;
+        min-height: 2.75rem;
+        padding: 0.625rem 1rem;
+        text-decoration: none;
+      }
+
+      .ef-product__add:focus-visible,
+      .ef-side-switch__card:focus-visible,
+      .ef-fit-assistant__cta:focus-visible,
+      .ef-accordion:focus-within {
+        outline: 3px solid var(--ef-focus);
+        outline-offset: 3px;
+      }
+
+      .ef-fit-assistant__cta:hover {
+        background: #e7e9e3;
+      }
+
+      .ef-accordions {
+        border-top: 1px solid var(--ef-line);
+        margin-block-start: 1.5rem;
+      }
+
+      .ef-accordion {
+        border-bottom: 1px solid var(--ef-line);
+      }
+
+      .ef-accordion__summary {
+        cursor: pointer;
+        font-size: 0.9375rem;
+        font-weight: 700;
+        min-height: 3.25rem;
+        padding: 1rem 0;
+      }
+
+      .ef-accordion__content {
+        color: var(--ef-muted);
+        font-size: 0.875rem;
+        line-height: 1.5;
+        margin: 0;
+        padding: 0 0 1rem;
+      }
+
+      @media (min-width: 54rem) {
+        .ef-header {
+          min-height: 4.25rem;
+          padding-inline: 2rem;
+        }
+
+        .ef-product {
+          display: grid;
+          gap: clamp(2rem, 5vw, 5.5rem);
+          grid-template-columns: minmax(0, 1.18fr) minmax(25rem, 0.82fr);
+          padding: 2.5rem 2rem 4rem;
+        }
+
+        .ef-gallery {
+          background: transparent;
+          display: grid;
+          gap: 0.75rem;
+          grid-template-columns: 4.5rem minmax(0, 1fr);
+          min-height: 0;
+          padding: 0;
+        }
+
+        .ef-gallery__stage {
+          border-radius: 1rem;
+          height: min(44rem, 72vh);
+          min-height: 34rem;
+          order: 2;
+        }
+
+        .ef-gallery__thumbs {
+          display: grid;
+          gap: 0.6rem;
+          grid-auto-rows: 4.5rem;
+          order: 1;
+        }
+
+        .ef-gallery__thumb {
+          background: #d7cec6;
+          border: 1px solid #c6bbb1;
+          border-radius: 0.5rem;
+        }
+
+        .ef-gallery__thumb--active {
+          background: #624c42;
+          border-color: #3a2c27;
+        }
+
+        .ef-product__info {
+          padding: 0;
+        }
+
+        .ef-product__title {
+          font-size: clamp(2rem, 3vw, 2.75rem);
+        }
+
+        .ef-purchase-trust__line {
+          font-size: 0.875rem;
+        }
+
+        .ef-fit-assistant {
+          padding: 1.125rem 1.25rem;
+        }
+
+        .ef-fit-assistant__measurements {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+    </style>
+  </head>
+  <body class="ef-page">
+    <p class="ef-page__notice">Mockup para prueba — no es captura del sitio live</p>
+
+    <header class="ef-header">
+      <span class="ef-header__brand">EUROFUNDA</span>
+    </header>
+
+    <main class="ef-product">
+      <section class="ef-gallery" aria-label="Galería del producto — contenido de muestra">
+        <div class="ef-gallery__stage">
+          <span class="ef-gallery__placeholder">Espacio de galería del producto</span>
+        </div>
+        <div class="ef-gallery__thumbs" aria-hidden="true">
+          <span class="ef-gallery__thumb ef-gallery__thumb--active"></span>
+          <span class="ef-gallery__thumb"></span>
+          <span class="ef-gallery__thumb"></span>
+          <span class="ef-gallery__thumb"></span>
+        </div>
+      </section>
+
+      <section class="ef-product__info" aria-label="Información y compra del producto">
+        <p class="ef-product__sku">SKU EFMFSLDDC</p>
+        <h1 class="ef-product__title">Microfibra - Funda Sofa L Derecho Dark Chocolate</h1>
+        <p class="ef-product__price">$219.900 CLP</p>
+
+        <div class="ef-purchase-trust" aria-label="Pago, despacho y garantías">
+          <p class="ef-purchase-trust__line">Hasta 6 cuotas sin interés · Envío gratis sobre $80.000 · 1 año por fallas de fabricación · 10 días de satisfacción según condiciones.</p>
+        </div>
+
+        <button class="ef-product__add" type="button">Agregar al carrito</button>
+
+        <div class="ef-purchase-assist">
+          <fieldset class="ef-side-switch">
+            <legend class="ef-side-switch__legend">
+              <span class="ef-side-switch__eyebrow">Elige el lado correcto</span>
+              <span class="ef-side-switch__question">Mirando el sofá de frente, ¿dónde está el chaise longue?</span>
+            </legend>
+
+            <div class="ef-side-switch__options">
+              <div class="ef-side-switch__card ef-side-switch__card--active" aria-current="true">
+                <span class="ef-side-switch__label">Derecho</span>
+                <svg class="ef-side-switch__diagram" viewBox="0 0 96 58" aria-hidden="true" focusable="false">
+                  <path d="M10 14h68a8 8 0 0 1 8 8v25a5 5 0 0 1-5 5H65a5 5 0 0 1-5-5V36H15a5 5 0 0 1-5-5V14Z" />
+                  <path d="M18 20v9h48v15h12V22H18Z" />
+                </svg>
+                <span class="ef-side-switch__status">Seleccionado</span>
+              </div>
+
+              <a
+                class="ef-side-switch__card"
+                href="https://eurofunda.cl/products/funda-de-sofa-esquinero-izquierdo-dark-chocolate"
+                aria-label="Cambiar al lado Izquierdo"
+              >
+                <span class="ef-side-switch__label">Izquierdo</span>
+                <svg class="ef-side-switch__diagram" viewBox="0 0 96 58" aria-hidden="true" focusable="false">
+                  <path d="M86 14H18a8 8 0 0 0-8 8v25a5 5 0 0 0 5 5h16a5 5 0 0 0 5-5V36h45a5 5 0 0 0 5-5V14Z" />
+                  <path d="M78 20v9H30v15H18V22h60Z" />
+                </svg>
+                <span class="ef-side-switch__status">Ver modelo</span>
+              </a>
+            </div>
+
+            <p class="ef-side-switch__note">La orientación se define mirando el sofá de frente.</p>
+          </fieldset>
+
+          <aside class="ef-fit-assistant" aria-label="Ayuda antes de comprar">
+            <p class="ef-fit-assistant__eyebrow">Ayuda antes de comprar</p>
+            <h2 class="ef-fit-assistant__heading">¿Aún tienes dudas con la medida o el lado?</h2>
+            <p class="ef-fit-assistant__body">Envíanos una foto de tu sofá por WhatsApp y te ayudamos a confirmar el modelo antes de comprar.</p>
+            <ul class="ef-fit-assistant__measurements" aria-label="Rangos de medidas compatibles">
+              <li class="ef-fit-assistant__measurement">Tramo principal: 180–370 cm</li>
+              <li class="ef-fit-assistant__measurement">Chaise longue: 100–180 cm</li>
+            </ul>
+            <a
+              class="ef-fit-assistant__cta"
+              href="https://wa.me/56225830907?text=Hola%2C%20tengo%20dudas%20sobre%20el%20lado%20o%20la%20medida%20de%20Microfibra%20-%20Funda%20Sofa%20L%20Derecho%20Dark%20Chocolate%3A%20https%3A%2F%2Feurofunda.cl%2Fproducts%2Ffunda-de-sofa-esquinero-derecho-dark-chocolate.%20%C2%BFMe%20ayudan%20a%20confirmar%20el%20modelo%20antes%20de%20comprar%3F"
+              target="_blank"
+              rel="noopener"
+            >Confirmar por WhatsApp</a>
+          </aside>
+        </div>
+
+        <div class="ef-accordions">
+          <details class="ef-accordion">
+            <summary class="ef-accordion__summary">Descripción</summary>
+            <p class="ef-accordion__content">Contenido de referencia de la ficha de producto.</p>
+          </details>
+          <details class="ef-accordion">
+            <summary class="ef-accordion__summary">Tela</summary>
+            <p class="ef-accordion__content">Información de tela dentro de la ficha real.</p>
+          </details>
+          <details class="ef-accordion">
+            <summary class="ef-accordion__summary">Medidas</summary>
+            <p class="ef-accordion__content">Tramo principal: 180–370 cm. Chaise longue: 100–180 cm.</p>
+          </details>
+          <details class="ef-accordion">
+            <summary class="ef-accordion__summary">Cuidado</summary>
+            <p class="ef-accordion__content">Consultar las indicaciones vigentes del producto.</p>
+          </details>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

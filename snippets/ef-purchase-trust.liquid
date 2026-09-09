@@ -1,0 +1,7 @@
+{%- liquid
+  assign ef_trust_text = trust_text | default: 'Hasta 6 cuotas sin interés · Envío gratis sobre $80.000 · 1 año por fallas de fabricación · 10 días de satisfacción según condiciones.'
+-%}
+
+<div class="ef-purchase-trust" aria-label="Pago, despacho y garantías">
+  <p class="ef-purchase-trust__line">{{ ef_trust_text | escape }}</p>
+</div>

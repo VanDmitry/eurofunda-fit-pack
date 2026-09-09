@@ -1,0 +1,152 @@
+{% comment %}
+  Standalone section можно перемещать между секциями JSON-шаблона.
+  Она не гарантирует размещение непосредственно внутри product info под Add to Cart:
+  это зависит от структуры main product section конкретной темы.
+{% endcomment %}
+
+{%- liquid
+  if section.settings.current_side == 'left'
+    assign ef_opposite_label = section.settings.right_label
+  else
+    assign ef_opposite_label = section.settings.left_label
+  endif
+  assign ef_paired_product_url = section.settings.paired_product_url | default: '/products/funda-de-sofa-esquinero-izquierdo-dark-chocolate'
+-%}
+
+<section class="ef-purchase-assist-section ef-purchase-assist-section--{{ section.id }}" aria-label="Ayuda para elegir la funda">
+  {% render 'ef-purchase-assist',
+    product: product,
+    show_trust: section.settings.show_trust,
+    trust_text: section.settings.trust_text,
+    current_side: section.settings.current_side,
+    opposite_url: ef_paired_product_url,
+    opposite_label: ef_opposite_label,
+    right_label: section.settings.right_label,
+    left_label: section.settings.left_label,
+    whatsapp_number: section.settings.whatsapp_number,
+    fit_heading: section.settings.fit_heading,
+    fit_body: section.settings.fit_body,
+    main_range: section.settings.main_range,
+    chaise_range: section.settings.chaise_range
+  %}
+</section>
+
+<style>
+  .ef-purchase-assist-section--{{ section.id }} {
+    margin-inline: auto;
+    max-width: var(--page-width, 75rem);
+    padding-inline: 1rem;
+  }
+
+  .ef-purchase-assist-section--{{ section.id }} .ef-purchase-assist {
+    margin-inline: auto;
+  }
+
+  @media (min-width: 48rem) {
+    .ef-purchase-assist-section--{{ section.id }} {
+      padding-inline: 2rem;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "EF Purchase Assist",
+  "tag": "section",
+  "class": "ef-purchase-assist-host",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Pago y confianza"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_trust",
+      "label": "Mostrar línea de confianza",
+      "default": true
+    },
+    {
+      "type": "textarea",
+      "id": "trust_text",
+      "label": "Texto de pago, despacho y garantías",
+      "default": "Hasta 6 cuotas sin interés · Envío gratis sobre $80.000 · 1 año por fallas de fabricación · 10 días de satisfacción según condiciones."
+    },
+    {
+      "type": "header",
+      "content": "Selección de lado"
+    },
+    {
+      "type": "select",
+      "id": "current_side",
+      "label": "Lado actual",
+      "options": [
+        {
+          "value": "right",
+          "label": "Derecho"
+        },
+        {
+          "value": "left",
+          "label": "Izquierdo"
+        }
+      ],
+      "default": "right"
+    },
+    {
+      "type": "url",
+      "id": "paired_product_url",
+      "label": "URL del producto del lado opuesto"
+    },
+    {
+      "type": "text",
+      "id": "right_label",
+      "label": "Etiqueta lado derecho",
+      "default": "Derecho"
+    },
+    {
+      "type": "text",
+      "id": "left_label",
+      "label": "Etiqueta lado izquierdo",
+      "default": "Izquierdo"
+    },
+    {
+      "type": "header",
+      "content": "Asistente por WhatsApp"
+    },
+    {
+      "type": "text",
+      "id": "whatsapp_number",
+      "label": "Número de WhatsApp con código de país",
+      "default": "+56 2 2583 0907"
+    },
+    {
+      "type": "text",
+      "id": "fit_heading",
+      "label": "Título",
+      "default": "¿Aún tienes dudas con la medida o el lado?"
+    },
+    {
+      "type": "textarea",
+      "id": "fit_body",
+      "label": "Texto",
+      "default": "Envíanos una foto de tu sofá por WhatsApp y te ayudamos a confirmar el modelo antes de comprar."
+    },
+    {
+      "type": "text",
+      "id": "main_range",
+      "label": "Rango del tramo principal",
+      "default": "180–370 cm"
+    },
+    {
+      "type": "text",
+      "id": "chaise_range",
+      "label": "Rango del chaise longue",
+      "default": "100–180 cm"
+    }
+  ],
+  "presets": [
+    {
+      "name": "EF Purchase Assist"
+    }
+  ]
+}
+{% endschema %}

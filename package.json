@@ -1,0 +1,12 @@
+{
+  "name": "eurofunda-fit-pack",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "shots": "node scripts/shots.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.55.0"
+  }
+}
