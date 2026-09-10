@@ -86,7 +86,7 @@ index 0000000..b65e0cd
 +  assign ef_heading = fit_heading | default: '¿Aún tienes dudas con la medida o el lado?'
 +  assign ef_body = fit_body | default: 'Envíanos una foto de tu sofá por WhatsApp y te ayudamos a confirmar el modelo antes de comprar.'
 +  assign ef_main_range = main_range | default: '180–370 cm'
-+  assign ef_chaise_range = chaise_range | default: '100–180 cm'
++  assign ef_chaise_range = chaise_range | default: '100–170 cm'
 +  assign ef_placement = placement | default: 'pdp_below_primary_cta'
 +  assign ef_product_url = shop.url | append: product.url
 +  assign ef_variant = product.selected_or_first_available_variant

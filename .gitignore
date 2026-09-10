@@ -2,6 +2,8 @@ node_modules/
 .playwright/
 playwright-report/
 test-results/
+.tmp-product-media-audit/
+assets/product-images/**/*.jpg
 .env
 .env.*
 !.env.example

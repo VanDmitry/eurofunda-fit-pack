@@ -4,6 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "shopify:products": "node scripts/shopify-admin.mjs products",
+    "shopify:media": "node scripts/shopify-admin.mjs media",
     "shots": "node scripts/shots.mjs"
   },
   "devDependencies": {

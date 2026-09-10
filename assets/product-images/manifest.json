@@ -1,0 +1,158 @@
+{
+  "generated_at": "2026-09-10",
+  "source_policy": "Official Eurofunda PDP and Shopify CDN only; original files downloaded without transcoding or upscaling.",
+  "source_products": {
+    "derecho": "https://eurofunda.cl/products/funda-de-sofa-esquinero-derecho-dark-chocolate",
+    "izquierdo": "https://eurofunda.cl/products/funda-de-sofa-esquinero-izquierdo-dark-chocolate"
+  },
+  "selection_notes": {
+    "source_gallery_assets_per_product": 8,
+    "selected_assets_per_product": 5,
+    "source_alt_text": "The public Shopify product JSON returned null alt text for every source image.",
+    "duplicates": "The source galleries share two exact assets (Derecho order 3 = Izquierdo order 3; Derecho order 6 = Izquierdo order 5). The curated upload sets do not reuse the same file across both products."
+  },
+  "derecho": [
+    {
+      "file": "derecho/01-hero.jpg",
+      "source_url": "https://cdn.shopify.com/s/files/1/0271/2577/6463/products/MS023LSR_001-web.jpg?v=1776276502",
+      "source_gallery_order": 1,
+      "source_media_id": 31256938053856,
+      "source_alt": null,
+      "role": "hero",
+      "width": 1600,
+      "height": 1600,
+      "bytes": 123319,
+      "sha256": "336b04e1e6b0efb833536fe37c38a7c047e0eb1476165ec15e3372906b924f70",
+      "http_status": 200,
+      "alt_suggestion": "Sofá en L derecho con funda de microfibra Dark Chocolate sobre fondo blanco"
+    },
+    {
+      "file": "derecho/02-angle.jpg",
+      "source_url": "https://cdn.shopify.com/s/files/1/0271/2577/6463/files/MICTUS_023_LSR_03b-web.jpg?v=1776276502",
+      "source_gallery_order": 2,
+      "source_media_id": 38321404870880,
+      "source_alt": null,
+      "role": "angle",
+      "width": 1600,
+      "height": 1600,
+      "bytes": 267980,
+      "sha256": "75d3a216e1fd82d0c0afdd4206ff50b4f1167444bc28ac5a181366c150237ee5",
+      "http_status": 200,
+      "alt_suggestion": "Sofá en L derecho con funda Dark Chocolate en una sala contemporánea"
+    },
+    {
+      "file": "derecho/03-angle.jpg",
+      "source_url": "https://cdn.shopify.com/s/files/1/0271/2577/6463/files/MICTUS_023_LSR_03-web.jpg?v=1776276502",
+      "source_gallery_order": 4,
+      "source_media_id": 38321404903648,
+      "source_alt": null,
+      "role": "angle",
+      "width": 1600,
+      "height": 1600,
+      "bytes": 243268,
+      "sha256": "968be3cf37a38de3fe343e5793b182531d93af04f2dc480003989bc39ddc4b74",
+      "http_status": 200,
+      "alt_suggestion": "Vista frontal del sofá en L derecho con funda Dark Chocolate"
+    },
+    {
+      "file": "derecho/04-texture.jpg",
+      "source_url": "https://cdn.shopify.com/s/files/1/0271/2577/6463/files/MICTUS_023_04-web_d9876acf-8594-4c7a-9b46-c19a0a13354c.jpg?v=1776276502",
+      "source_gallery_order": 3,
+      "source_media_id": 38321421353184,
+      "source_alt": null,
+      "role": "texture",
+      "width": 1600,
+      "height": 1600,
+      "bytes": 130298,
+      "sha256": "909a8032762c00e590a32b988c61e3d78702413af70a6c9cecbbb6eceac3c54e",
+      "http_status": 200,
+      "alt_suggestion": "Detalle de la textura elástica de microfibra Dark Chocolate"
+    },
+    {
+      "file": "derecho/05-fit.jpg",
+      "source_url": "https://cdn.shopify.com/s/files/1/0271/2577/6463/files/MICTUS_023_LSR_01_misure.jpg?v=1776276502",
+      "source_gallery_order": 7,
+      "source_media_id": 38321408606432,
+      "source_alt": null,
+      "role": "fit",
+      "width": 1600,
+      "height": 1600,
+      "bytes": 193442,
+      "sha256": "99969366aaeee4e43f948fa414e99ec6c6e637a9d9fc3a5b4eca0b587c223147",
+      "http_status": 200,
+      "alt_suggestion": "Medidas compatibles de la funda para sofá en L derecho Dark Chocolate"
+    }
+  ],
+  "izquierdo": [
+    {
+      "file": "izquierdo/01-hero.jpg",
+      "source_url": "https://cdn.shopify.com/s/files/1/0271/2577/6463/products/MS023LSL_001-web.jpg?v=1776277584",
+      "source_gallery_order": 1,
+      "source_media_id": 31256947720416,
+      "source_alt": null,
+      "role": "hero",
+      "width": 1600,
+      "height": 1600,
+      "bytes": 156550,
+      "sha256": "c3daf2c8a2df264bda2dee4e45dacdf53d3882081e1b143a9514a94c491701ac",
+      "http_status": 200,
+      "alt_suggestion": "Sofá en L izquierdo con funda de microfibra Dark Chocolate sobre fondo blanco"
+    },
+    {
+      "file": "izquierdo/02-angle.jpg",
+      "source_url": "https://cdn.shopify.com/s/files/1/0271/2577/6463/files/MICTUS_023_LSL_03b-web.jpg?v=1776277584",
+      "source_gallery_order": 2,
+      "source_media_id": 38321315447008,
+      "source_alt": null,
+      "role": "angle",
+      "width": 1600,
+      "height": 1600,
+      "bytes": 318498,
+      "sha256": "957fff613c6d581a8875149883edf1416830e59b334d2077b5f3707dda0537c8",
+      "http_status": 200,
+      "alt_suggestion": "Sofá en L izquierdo con funda Dark Chocolate en una sala contemporánea"
+    },
+    {
+      "file": "izquierdo/03-angle.jpg",
+      "source_url": "https://cdn.shopify.com/s/files/1/0271/2577/6463/files/MICTUS_023_LSL_03-web.jpg?v=1776277584",
+      "source_gallery_order": 6,
+      "source_media_id": 38321315414240,
+      "source_alt": null,
+      "role": "angle",
+      "width": 1600,
+      "height": 1600,
+      "bytes": 278987,
+      "sha256": "e7f5926c4de9a8a9cb2d62f69dc6566b20f2626efaaf1cf9765ae97668132de7",
+      "http_status": 200,
+      "alt_suggestion": "Vista frontal del sofá en L izquierdo con funda Dark Chocolate"
+    },
+    {
+      "file": "izquierdo/04-texture.jpg",
+      "source_url": "https://cdn.shopify.com/s/files/1/0271/2577/6463/files/MICTUS_023_LSL_01_mano.jpg?v=1776277584",
+      "source_gallery_order": 8,
+      "source_media_id": 38321340711136,
+      "source_alt": null,
+      "role": "texture",
+      "width": 4724,
+      "height": 4724,
+      "bytes": 1360793,
+      "sha256": "1722e20729e46d53236a435e77e138be113c2d0cf2d953915022eb388eb3557b",
+      "http_status": 200,
+      "alt_suggestion": "Elasticidad y textura de la funda de microfibra Dark Chocolate"
+    },
+    {
+      "file": "izquierdo/05-fit.jpg",
+      "source_url": "https://cdn.shopify.com/s/files/1/0271/2577/6463/files/MICTUS_023_LSL_01_misure.jpg?v=1776277584",
+      "source_gallery_order": 4,
+      "source_media_id": 38321348935904,
+      "source_alt": null,
+      "role": "fit",
+      "width": 1600,
+      "height": 1600,
+      "bytes": 237918,
+      "sha256": "65077101880b547117d7869819c34fceb7016ad2cae5df1723ecec3f323ca548",
+      "http_status": 200,
+      "alt_suggestion": "Medidas compatibles de la funda para sofá en L izquierdo Dark Chocolate"
+    }
+  ]
+}

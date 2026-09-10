@@ -2,13 +2,13 @@
 
 - **Status:** PASS
 - **Date:** 2026-09-10
-- **Implementation package HEAD:** `55c93ce674a79108e66adbd2b851c0789bac52f9`
+- **Implementation package HEAD:** `140f1d21bef975a6d1d27322604728e33da2a0cd`
 
 ## Что реализовано
 
 - trust/reassurance сразу после цены с принятой безопасной формулировкой;
 - selector Derecho / Izquierdo с парной ссылкой и корректной активной стороной;
-- Fit Assistant с диапазонами 180–370 cm и 100–180 cm;
+- Fit Assistant с диапазонами 180–370 cm и 100–170 cm;
 - WhatsApp как secondary fallback ниже основного Add to cart;
 - storefront-события `eurofunda:side_switch_click` и `eurofunda:fit_whatsapp_click`.
 
@@ -32,8 +32,11 @@ Theme-specific файлы:
 
 ## QA
 
-- Обе PDP проверены при 375×812, 390×844, 430×932 и 1440×900: horizontal overflow отсутствует, layout стабилен, интерактивные цели не меньше 44×44 px.
-- Add to cart доступен и возвращает успешный `/cart/add`; cart drawer открывается и содержит правильный товар.
+- Обе PDP с реальными product media проверены при 375×812, 390×844, 430×932 и 1440×900: horizontal overflow отсутствует, layout стабилен.
+- На mobile gallery занимает ширину viewport (365 px при 375, 380 px при 390 и 420 px при 430), после неё сразу доступны title, price и trust; purchase area не утонула после добавления изображений.
+- Mobile gallery показывает пять slide controls; переход со слайда 1 на 2 меняет hero на ожидаемый lifestyle-angle.
+- На desktop видны пять изображений в gallery-grid; product info сохраняет нормальный баланс с gallery, а title, price, trust, Add to cart, side switch и Fit Assistant образуют понятную purchase-зону.
+- Add to cart добавляет одну единицу товара; cart drawer открывается и содержит правильный Derecho product, изображение, цену и quantity 1.
 - Dynamic checkout (`Buy it now`) остаётся на месте, Add to cart визуально главный; sticky Add to cart не перекрывает WhatsApp CTA.
 - Derecho → Izquierdo → Back и Izquierdo → Derecho → Back проверены реальной навигацией; demo-template и активная сторона сохраняются.
 - WhatsApp URL использует `wa.me/56225830907`; prefilled message содержит правильные title и product URL.
@@ -53,16 +56,36 @@ Theme-specific файлы:
 
 Оба товара активны, доступны к покупке и имеют цену 219,900 CLP. Параметр `view=eurofunda-demo` ограничивает эксперимент двумя demo-PDP; paired links сохраняют этот view. Preview может запросить storefront password — передавать его рецензенту нужно отдельно, не через Git.
 
+## Product media
+
+Обе demo PDP дополнены официальными изображениями товара Eurofunda для проверки CRO-компонентов в реалистичном контексте карточки товара.
+
+- Derecho: 5 images, все `READY`, hero — Derecho;
+- Izquierdo: 5 images, все `READY`, hero — Izquierdo;
+- порядок: hero → angle → angle → texture → fit;
+- диапазон chaise longue `100–170 cm` сверен с fit-изображениями обоих товаров и одинаков в изображении, Fit Assistant и mockup;
+- источники и alt texts: `assets/product-images/manifest.json`;
+- исходные JPG исключены из Git.
+
+## Admin API automation
+
+- API: Shopify GraphQL Admin API `2026-07`;
+- authentication: client credentials grant для Dev Dashboard app, установленного в development store той же организации;
+- scopes: `read_products`, `write_products`;
+- media: `productUpdate` + `CreateMediaInput.originalSource` с публичными официальными Shopify CDN URLs;
+- idempotency: пустой media-set разрешает загрузку; точное совпадение пяти IMAGE/alt пропускает mutation; любое другое состояние останавливает скрипт без удаления или перезаписи;
+- credentials и временный access token не хранятся в repository.
+
 ## Screenshots
 
 - `evidence/devstore-preview-mobile-390-first.png` — 390×844;
-- `evidence/devstore-preview-mobile-390-full.png` — 390×1860, full page;
+- `evidence/devstore-preview-mobile-390-full.png` — 390×2250, full page;
 - `evidence/devstore-preview-desktop-1440.png` — 1440×900.
 
 ## Ограничения
 
 - Это стандартная Horizon в отдельном dev store, а не реальная тема Eurofunda; production placement нужно повторно подтвердить на её архитектуре.
-- Demo-products созданы без product media, поэтому gallery-сценарий с изображениями не воспроизводился; существующий gallery-код Horizon не менялся.
+- Product media загружены только в два demo-products development store; live Eurofunda и live-тема не изменялись.
 - Accelerated checkout визуально сохранён, но платёжный checkout/test order не выполнялся.
 - Custom Pixel не устанавливался: проверена theme-side публикация событий; перед production нужно изучить существующие GTM/GA4/Meta paths и не создавать дубль.
 - Live-сайт и live-тема не изменялись; demo-тема остаётся unpublished.
