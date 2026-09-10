@@ -72,7 +72,9 @@ async function assertStaticPackage() {
   assert.doesNotMatch(allCustomerCopy, /Envío gratis sobre \$80\.000 ·/);
   assert.match(allCustomerCopy, /Envío gratis sobre \$80\.000 en Chile continental/);
   assert.doesNotMatch(allCustomerCopy, /100[–-]180 cm/, 'Chaise range conflicts with the official fit image');
-  assert.match(allCustomerCopy, /100–170 cm/, 'Chaise range must match the official fit image');
+  assert.doesNotMatch(allCustomerCopy, /100[–-]170 cm/, 'Customer copy must not claim a disputed chaise range');
+  assert.match(allCustomerCopy, /¿Dudas con la medida del chaise longue\?/);
+  assert.match(allCustomerCopy, /Envíanos una foto y revisamos la compatibilidad antes de comprar\./);
 
   const trustPoint = integration.indexOf("{% render 'ef-purchase-trust' %}");
   const sidePoint = integration.indexOf("{% render 'ef-side-switch'");

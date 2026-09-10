@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "shopify:products": "node scripts/shopify-admin.mjs products",
+    "shopify:routing": "node scripts/shopify-admin.mjs routing",
     "shopify:media": "node scripts/shopify-admin.mjs media",
+    "shopify:curate-media": "node scripts/shopify-admin.mjs curate-media",
     "shots": "node scripts/shots.mjs"
   },
   "devDependencies": {

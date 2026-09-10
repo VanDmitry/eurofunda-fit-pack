@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 
 const API_VERSION = "2026-07";
 const EXPECTED_SHOP = "eurofunda-cro-demo";
+const EXPECTED_TEMPLATE_SUFFIX = "eurofunda-demo";
 const PRODUCT_SPECS = [
   {
     side: "DERECHO",
@@ -14,12 +15,17 @@ const PRODUCT_SPECS = [
     manifestKey: "izquierdo",
   },
 ];
+const REPLACED_MEDIA_ALTS = {
+  derecho: "Vista frontal del sofá en L derecho con funda Dark Chocolate",
+  izquierdo: "Vista frontal del sofá en L izquierdo con funda Dark Chocolate",
+};
 
 const PRODUCT_FIELDS = `
   id
   title
   handle
   status
+  templateSuffix
   media(first: 100) {
     nodes {
       id
@@ -77,6 +83,40 @@ const UPDATE_PRODUCT_MEDIA_MUTATION = `
         field
         message
       }
+    }
+  }
+`;
+
+const UPDATE_PRODUCT_TEMPLATE_MUTATION = `
+  mutation UpdateProductTemplate($product: ProductUpdateInput!) {
+    productUpdate(product: $product) {
+      product {
+        id
+        handle
+        templateSuffix
+      }
+      userErrors {
+        field
+        message
+      }
+    }
+  }
+`;
+
+const DELETE_PRODUCT_MEDIA_MUTATION = `
+  mutation DeleteProductMedia($productId: ID!, $mediaIds: [ID!]!) {
+    productDeleteMedia(productId: $productId, mediaIds: $mediaIds) {
+      deletedMediaIds
+      mediaUserErrors { field message }
+    }
+  }
+`;
+
+const REORDER_PRODUCT_MEDIA_MUTATION = `
+  mutation ReorderProductMedia($id: ID!, $moves: [MoveInput!]!) {
+    productReorderMedia(id: $id, moves: $moves) {
+      job { id }
+      mediaUserErrors { field message }
     }
   }
 `;
@@ -211,9 +251,179 @@ function printProductPreflight(products) {
       TITLE: product.title,
       HANDLE: product.handle,
       STATUS: product.status,
+      "TEMPLATE SUFFIX": product.templateSuffix || "(default)",
       "MEDIA COUNT": product.media.nodes.length,
     })),
   );
+}
+
+async function assignProductTemplates(adminGraphql, products) {
+  const unexpected = products.filter(
+    ({ product }) =>
+      product.templateSuffix && product.templateSuffix !== EXPECTED_TEMPLATE_SUFFIX,
+  );
+  if (unexpected.length) {
+    throw new Error(
+      `Safety gate stopped: unexpected template suffix on ${unexpected
+        .map(({ spec, product }) => `${spec.side} (${product.templateSuffix})`)
+        .join(", ")}`,
+    );
+  }
+
+  for (const { spec, product } of products) {
+    if (product.templateSuffix === EXPECTED_TEMPLATE_SUFFIX) {
+      console.log(`${spec.side}: template already assigned; mutation skipped`);
+      continue;
+    }
+    const data = await adminGraphql(UPDATE_PRODUCT_TEMPLATE_MUTATION, {
+      product: { id: product.id, templateSuffix: EXPECTED_TEMPLATE_SUFFIX },
+    });
+    const result = data.productUpdate;
+    if (result.userErrors.length) {
+      throw new Error(
+        `${spec.side} productUpdate userErrors: ${result.userErrors
+          .map((error) => `${error.field?.join(".") || "unknown"}: ${error.message}`)
+          .join("; ")}`,
+      );
+    }
+    if (result.product?.templateSuffix !== EXPECTED_TEMPLATE_SUFFIX) {
+      throw new Error(`${spec.side}: template assignment was not returned by Shopify`);
+    }
+    console.log(`${spec.side}: template assigned`);
+  }
+
+  const verified = await findProducts(adminGraphql);
+  for (const { spec, product } of verified) {
+    if (product.templateSuffix !== EXPECTED_TEMPLATE_SUFFIX) {
+      throw new Error(`${spec.side}: template verification failed`);
+    }
+  }
+  printProductPreflight(verified);
+  console.log(`TEMPLATE ROUTING: PASS (${EXPECTED_TEMPLATE_SUFFIX})`);
+}
+
+function mediaAltList(product) {
+  return product.media.nodes.map((media) => media.alt || "");
+}
+
+function sameList(left, right) {
+  return left.length === right.length && left.every((item, index) => item === right[index]);
+}
+
+async function waitForMediaAltOrder(adminGraphql, productId, expectedAlts) {
+  const startedAt = Date.now();
+  while (Date.now() - startedAt <= 120_000) {
+    const product = await readProductById(adminGraphql, productId);
+    if (
+      sameList(mediaAltList(product), expectedAlts) &&
+      product.media.nodes.every(
+        (media) => media.status === "READY" && media.preview?.status === "READY",
+      )
+    ) {
+      return product;
+    }
+    await sleep(3_000);
+  }
+  throw new Error(`Timed out waiting for curated media order on ${productId}`);
+}
+
+async function curateProductMedia(adminGraphql, products, manifest) {
+  for (const { spec, product: initialProduct } of products) {
+    const expected = expectedMedia(manifest, spec);
+    const expectedAlts = expected.map((item) => item.alt);
+    const oldAlts = [...expectedAlts];
+    oldAlts[2] = REPLACED_MEDIA_ALTS[spec.manifestKey];
+    let product = initialProduct;
+    let currentAlts = mediaAltList(product);
+
+    if (sameList(currentAlts, expectedAlts)) {
+      console.log(`${spec.side}: curated gallery already complete; mutation skipped`);
+      continue;
+    }
+    const oldMedia = product.media.nodes.find(
+      (media) => media.alt === REPLACED_MEDIA_ALTS[spec.manifestKey],
+    );
+    const replacement = product.media.nodes.find((media) => media.alt === expectedAlts[2]);
+    const initialStateIsSafe =
+      sameList(currentAlts, oldAlts) ||
+      (currentAlts.length === 6 && oldMedia && replacement);
+    if (!initialStateIsSafe) {
+      printCurrentMedia(spec.side, product);
+      throw new Error(`${spec.side}: safety gate stopped on an unexpected gallery state`);
+    }
+
+    if (!replacement) {
+      const data = await adminGraphql(UPDATE_PRODUCT_MEDIA_MUTATION, {
+        product: { id: product.id },
+        media: [expected[2]],
+      });
+      if (data.productUpdate.userErrors.length) {
+        throw new Error(
+          `${spec.side}: replacement upload failed: ${data.productUpdate.userErrors
+            .map((error) => error.message)
+            .join("; ")}`,
+        );
+      }
+      console.log(`${spec.side}: distinct detail image submitted`);
+      const readyStartedAt = Date.now();
+      do {
+        if (Date.now() - readyStartedAt > 120_000) {
+          throw new Error(`${spec.side}: timed out waiting for replacement media to become READY`);
+        }
+        await sleep(3_000);
+        product = await readProductById(adminGraphql, product.id);
+      } while (
+        !product.media.nodes.some(
+          (media) =>
+            media.alt === expectedAlts[2] &&
+            media.status === "READY" &&
+            media.preview?.status === "READY",
+        )
+      );
+    }
+
+    const duplicate = product.media.nodes.find(
+      (media) => media.alt === REPLACED_MEDIA_ALTS[spec.manifestKey],
+    );
+    if (duplicate) {
+      const data = await adminGraphql(DELETE_PRODUCT_MEDIA_MUTATION, {
+        productId: product.id,
+        mediaIds: [duplicate.id],
+      });
+      const result = data.productDeleteMedia;
+      if (result.mediaUserErrors.length || !result.deletedMediaIds?.includes(duplicate.id)) {
+        throw new Error(
+          `${spec.side}: duplicate removal failed: ${result.mediaUserErrors
+            .map((error) => error.message)
+            .join("; ") || "deleted media ID not returned"}`,
+        );
+      }
+      console.log(`${spec.side}: near-duplicate image removed`);
+    }
+
+    product = await readProductById(adminGraphql, product.id);
+    const detail = product.media.nodes.find((media) => media.alt === expectedAlts[2]);
+    if (!detail || product.media.nodes.length !== 5) {
+      throw new Error(`${spec.side}: expected five media items before reordering`);
+    }
+    if (mediaAltList(product)[2] !== expectedAlts[2]) {
+      const data = await adminGraphql(REORDER_PRODUCT_MEDIA_MUTATION, {
+        id: product.id,
+        moves: [{ id: detail.id, newPosition: "2" }],
+      });
+      if (data.productReorderMedia.mediaUserErrors.length) {
+        throw new Error(
+          `${spec.side}: media reorder failed: ${data.productReorderMedia.mediaUserErrors
+            .map((error) => error.message)
+            .join("; ")}`,
+        );
+      }
+      console.log(`${spec.side}: detail image moved to position 3`);
+    }
+    product = await waitForMediaAltOrder(adminGraphql, product.id, expectedAlts);
+    console.log(`${spec.side}: curated gallery verified (${product.media.nodes.length}/5 READY)`);
+  }
+  console.log("MEDIA CURATION: PASS");
 }
 
 function expectedMedia(manifest, spec) {
@@ -365,8 +575,8 @@ function printMediaResult(products) {
 
 async function main() {
   const mode = process.argv[2];
-  if (!new Set(["products", "media"]).has(mode)) {
-    throw new Error("Usage: node scripts/shopify-admin.mjs <products|media>");
+  if (!new Set(["products", "media", "routing", "curate-media"]).has(mode)) {
+    throw new Error("Usage: node scripts/shopify-admin.mjs <products|media|routing|curate-media>");
   }
   const shop = normalizeShop(requiredEnvironment("SHOPIFY_SHOP"));
   if (shop !== EXPECTED_SHOP) {
@@ -382,6 +592,14 @@ async function main() {
   printProductPreflight(products);
   if (mode === "products") {
     console.log("READ-ONLY PREFLIGHT: PASS");
+    return;
+  }
+  if (mode === "routing") {
+    await assignProductTemplates(adminGraphql, products);
+    return;
+  }
+  if (mode === "curate-media") {
+    await curateProductMedia(adminGraphql, products, manifest);
     return;
   }
 

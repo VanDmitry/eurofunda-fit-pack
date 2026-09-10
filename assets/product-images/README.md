@@ -15,7 +15,7 @@ Product: `Microfibra - Funda Sofa L Derecho Dark Chocolate`
 
 1. `derecho/01-hero.jpg` — Sofá en L derecho con funda de microfibra Dark Chocolate sobre fondo blanco
 2. `derecho/02-angle.jpg` — Sofá en L derecho con funda Dark Chocolate en una sala contemporánea
-3. `derecho/03-angle.jpg` — Vista frontal del sofá en L derecho con funda Dark Chocolate
+3. `derecho/03-detail.jpg` — Detalle del ajuste de la funda Dark Chocolate en asiento y respaldo
 4. `derecho/04-texture.jpg` — Detalle de la textura elástica de microfibra Dark Chocolate
 5. `derecho/05-fit.jpg` — Medidas compatibles de la funda para sofá en L derecho Dark Chocolate
 
@@ -25,7 +25,7 @@ Product: `Microfibra - Funda Sofa L Izquierdo Dark Chocolate`
 
 1. `izquierdo/01-hero.jpg` — Sofá en L izquierdo con funda de microfibra Dark Chocolate sobre fondo blanco
 2. `izquierdo/02-angle.jpg` — Sofá en L izquierdo con funda Dark Chocolate en una sala contemporánea
-3. `izquierdo/03-angle.jpg` — Vista frontal del sofá en L izquierdo con funda Dark Chocolate
+3. `izquierdo/03-detail.jpg` — Detalle del ajuste de la funda Dark Chocolate en asiento y respaldo
 4. `izquierdo/04-texture.jpg` — Elasticidad y textura de la funda de microfibra Dark Chocolate
 5. `izquierdo/05-fit.jpg` — Medidas compatibles de la funda para sofá en L izquierdo Dark Chocolate
 

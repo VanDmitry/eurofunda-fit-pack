@@ -9,7 +9,7 @@
     "source_gallery_assets_per_product": 8,
     "selected_assets_per_product": 5,
     "source_alt_text": "The public Shopify product JSON returned null alt text for every source image.",
-    "duplicates": "The source galleries share two exact assets (Derecho order 3 = Izquierdo order 3; Derecho order 6 = Izquierdo order 5). The curated upload sets do not reuse the same file across both products."
+    "duplicates": "The source galleries share exact texture/detail assets. Within each curated product gallery, the near-duplicate second lifestyle angle was replaced by a distinct close-up showing how the fabric fits the sofa."
   },
   "derecho": [
     {
@@ -41,18 +41,18 @@
       "alt_suggestion": "Sofá en L derecho con funda Dark Chocolate en una sala contemporánea"
     },
     {
-      "file": "derecho/03-angle.jpg",
-      "source_url": "https://cdn.shopify.com/s/files/1/0271/2577/6463/files/MICTUS_023_LSR_03-web.jpg?v=1776276502",
-      "source_gallery_order": 4,
-      "source_media_id": 38321404903648,
+      "file": "derecho/03-detail.jpg",
+      "source_url": "https://cdn.shopify.com/s/files/1/0271/2577/6463/files/MICTUS_023_05-web_5e185b27-fb0b-4fab-95bc-f436c4c84db1.jpg?v=1776276502",
+      "source_gallery_order": 6,
+      "source_media_id": 38321421451488,
       "source_alt": null,
-      "role": "angle",
+      "role": "detail",
       "width": 1600,
       "height": 1600,
-      "bytes": 243268,
-      "sha256": "968be3cf37a38de3fe343e5793b182531d93af04f2dc480003989bc39ddc4b74",
+      "bytes": 202420,
+      "sha256": "270bfc1669915dde540f0f5bc6c93eb6323820e0933d490b7749ca9009d80d49",
       "http_status": 200,
-      "alt_suggestion": "Vista frontal del sofá en L derecho con funda Dark Chocolate"
+      "alt_suggestion": "Detalle del ajuste de la funda Dark Chocolate en asiento y respaldo"
     },
     {
       "file": "derecho/04-texture.jpg",
@@ -113,18 +113,18 @@
       "alt_suggestion": "Sofá en L izquierdo con funda Dark Chocolate en una sala contemporánea"
     },
     {
-      "file": "izquierdo/03-angle.jpg",
-      "source_url": "https://cdn.shopify.com/s/files/1/0271/2577/6463/files/MICTUS_023_LSL_03-web.jpg?v=1776277584",
-      "source_gallery_order": 6,
-      "source_media_id": 38321315414240,
+      "file": "izquierdo/03-detail.jpg",
+      "source_url": "https://cdn.shopify.com/s/files/1/0271/2577/6463/files/MICTUS_023_05-web.jpg?v=1776277584",
+      "source_gallery_order": 5,
+      "source_media_id": 38188915753184,
       "source_alt": null,
-      "role": "angle",
+      "role": "detail",
       "width": 1600,
       "height": 1600,
-      "bytes": 278987,
-      "sha256": "e7f5926c4de9a8a9cb2d62f69dc6566b20f2626efaaf1cf9765ae97668132de7",
+      "bytes": 202420,
+      "sha256": "270bfc1669915dde540f0f5bc6c93eb6323820e0933d490b7749ca9009d80d49",
       "http_status": 200,
-      "alt_suggestion": "Vista frontal del sofá en L izquierdo con funda Dark Chocolate"
+      "alt_suggestion": "Detalle del ajuste de la funda Dark Chocolate en asiento y respaldo"
     },
     {
       "file": "izquierdo/04-texture.jpg",

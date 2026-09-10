@@ -1,92 +1,205 @@
+diff --git a/blocks/_header-logo.liquid b/blocks/_header-logo.liquid
+index f8fc2db..1994228 100644
+--- a/blocks/_header-logo.liquid
++++ b/blocks/_header-logo.liquid
+@@ -62,10 +62,11 @@
+       class: 'header-logo__image',
+       height: settings.logo_height,
+       alt_text_fallback: alt_text_fallback,
+-      text_fallback: shop.name,
++      text_fallback: 'EUROFUNDA',
+       style: logo_style
+     %}
+   </span>
++  <span class="header-logo__demo-label">Demo técnico · Shopify development store</span>
+ 
+   {% if use_inverse_logo %}
+     <span
+@@ -88,6 +89,8 @@
+   .header-logo {
+     display: flex;
+     height: 100%;
++    align-items: center;
++    gap: 10px;
+     font-size: var(--font-size--md);
+     font-family: var(--font-family);
+     font-weight: var(--font-weight);
+@@ -122,6 +125,21 @@
+     }
+   }
+ 
++  .header-logo__demo-label {
++    color: rgb(var(--color-foreground-rgb) / 0.62);
++    font-size: 10px;
++    font-weight: 500;
++    letter-spacing: 0.02em;
++    line-height: 1.15;
++    max-width: 112px;
++  }
++
++  @media screen and (max-width: 749px) {
++    .header-logo__demo-label {
++      display: none;
++    }
++  }
++
+   .header-logo__image {
+     object-fit: contain;
+     height: var(--header-logo-image-height-mobile);
+diff --git a/blocks/buy-buttons.liquid b/blocks/buy-buttons.liquid
+index e5b813c..54e2c93 100644
+--- a/blocks/buy-buttons.liquid
++++ b/blocks/buy-buttons.liquid
+@@ -228,12 +228,14 @@
+             add_to_cart_text: add_to_cart_text
+           %}
+ 
+-          {% content_for 'block',
+-            type: 'accelerated-checkout',
+-            id: 'accelerated-checkout',
+-            can_add_to_cart: can_add_to_cart,
+-            form_obj: form
+-          %}
++          {%- unless template.name == 'product' and template.suffix == 'eurofunda-demo' -%}
++            {% content_for 'block',
++              type: 'accelerated-checkout',
++              id: 'accelerated-checkout',
++              can_add_to_cart: can_add_to_cart,
++              form_obj: form
++            %}
++          {%- endunless -%}
+         </div>
+         {%- if block_settings.gift_card_form and product.gift_card? -%}
+           </span>
 diff --git a/blocks/ef-purchase-assist.liquid b/blocks/ef-purchase-assist.liquid
-new file mode 100644
-index 0000000..d7185fc
---- /dev/null
+index d7185fc..7554b7a 100644
+--- a/blocks/ef-purchase-assist.liquid
 +++ b/blocks/ef-purchase-assist.liquid
-@@ -0,0 +1,49 @@
-+{%- liquid
-+  assign ef_right_handle = 'funda-de-sofa-esquinero-derecho-dark-chocolate'
-+  assign ef_left_handle = 'funda-de-sofa-esquinero-izquierdo-dark-chocolate'
-+  assign ef_current_side = blank
-+  assign ef_opposite_url = blank
-+
-+  case product.handle
-+    when ef_right_handle
-+      assign ef_current_side = 'right'
-+      assign ef_opposite_url = '/products/' | append: ef_left_handle | append: '?view=eurofunda-demo'
-+    when ef_left_handle
-+      assign ef_current_side = 'left'
-+      assign ef_opposite_url = '/products/' | append: ef_right_handle | append: '?view=eurofunda-demo'
-+  endcase
-+-%}
-+
-+{%- if ef_current_side != blank -%}
-+  <div class="ef-purchase-assist">
-+    {% render 'ef-side-switch',
-+      product: product,
-+      current_side: ef_current_side,
-+      opposite_url: ef_opposite_url,
-+      right_label: 'Derecho',
-+      left_label: 'Izquierdo',
-+      placement: 'pdp_purchase_area'
-+    %}
-+
-+    {% render 'ef-fit-assistant',
-+      product: product,
-+      whatsapp_number: '+56 2 2583 0907',
-+      placement: 'pdp_below_primary_cta'
-+    %}
-+  </div>
-+{%- elsif request.design_mode -%}
-+  <!-- EF purchase assist is intentionally limited to the two demo product handles. -->
-+{%- endif -%}
-+
-+{% schema %}
-+{
-+  "name": "EF purchase assist",
-+  "tag": null,
-+  "settings": [],
-+  "presets": [
-+    {
-+      "name": "EF purchase assist"
-+    }
-+  ]
-+}
-+{% endschema %}
-diff --git a/blocks/ef-purchase-trust.liquid b/blocks/ef-purchase-trust.liquid
-new file mode 100644
-index 0000000..106f103
---- /dev/null
-+++ b/blocks/ef-purchase-trust.liquid
-@@ -0,0 +1,15 @@
-+{% render 'ef-purchase-assist-styles' %}
-+{% render 'ef-purchase-trust' %}
-+
-+{% schema %}
-+{
-+  "name": "EF purchase trust",
-+  "tag": null,
-+  "settings": [],
-+  "presets": [
-+    {
-+      "name": "EF purchase trust"
-+    }
-+  ]
-+}
-+{% endschema %}
+@@ -7,10 +7,10 @@
+   case product.handle
+     when ef_right_handle
+       assign ef_current_side = 'right'
+-      assign ef_opposite_url = '/products/' | append: ef_left_handle | append: '?view=eurofunda-demo'
++      assign ef_opposite_url = '/products/' | append: ef_left_handle
+     when ef_left_handle
+       assign ef_current_side = 'left'
+-      assign ef_opposite_url = '/products/' | append: ef_right_handle | append: '?view=eurofunda-demo'
++      assign ef_opposite_url = '/products/' | append: ef_right_handle
+   endcase
+ -%}
+ 
+diff --git a/sections/footer-group.json b/sections/footer-group.json
+index 40f5b26..d7b0fbc 100644
+--- a/sections/footer-group.json
++++ b/sections/footer-group.json
+@@ -52,7 +52,7 @@
+             "text_LWt8Pz": {
+               "type": "text",
+               "settings": {
+-                "text": "<h2>Join our email list</h2>",
++                "text": "<h2>EUROFUNDA</h2>",
+                 "width": "100%",
+                 "max_width": "normal",
+                 "alignment": "left",
+@@ -76,7 +76,7 @@
+             "text_f9CFLH": {
+               "type": "text",
+               "settings": {
+-                "text": "<p>Get exclusive deals and early access to new products.</p>",
++                "text": "<p>Demo técnico · Shopify development store</p>",
+                 "width": "100%",
+                 "max_width": "normal",
+                 "alignment": "left",
+@@ -131,8 +131,7 @@
+         }
+       },
+       "block_order": [
+-        "group_H6VpwJ",
+-        "email_signup_crihX7"
++        "group_H6VpwJ"
+       ],
+       "name": "t:names.footer",
+       "settings": {
+@@ -149,7 +148,7 @@
+         "footer_copyright_jweRK8": {
+           "type": "footer-copyright",
+           "settings": {
+-            "show_powered_by": true,
++            "show_powered_by": false,
+             "font_size": "0.75rem",
+             "case": "none"
+           },
+@@ -176,9 +175,7 @@
+         }
+       },
+       "block_order": [
+-        "footer_copyright_jweRK8",
+-        "footer_policy_list_VCdnpa",
+-        "social_links_Ew63Kq"
++        "footer_copyright_jweRK8"
+       ],
+       "name": "t:names.utilities",
+       "settings": {
+diff --git a/sections/header-group.json b/sections/header-group.json
+index ce12fec..ec2dba1 100644
+--- a/sections/header-group.json
++++ b/sections/header-group.json
+@@ -17,7 +17,7 @@
+         "announcement_BxgCk9": {
+           "type": "_announcement",
+           "settings": {
+-            "text": "Welcome to our store",
++            "text": "Descuento 10% por 3 fundas",
+             "font": "var(--font-subheading--family)",
+             "font_size": "0.75rem",
+             "letter_spacing": "normal",
+@@ -81,9 +81,9 @@
+         "show_search": true,
+         "search_position": "right",
+         "search_row": "top",
+-        "show_country": true,
++        "show_country": false,
+         "country_selector_style": false,
+-        "show_language": true,
++        "show_language": false,
+         "localization_font": "heading",
+         "localization_font_size": "0.875rem",
+         "localization_position": "right",
 diff --git a/snippets/ef-fit-assistant.liquid b/snippets/ef-fit-assistant.liquid
-new file mode 100644
-index 0000000..b65e0cd
---- /dev/null
+index b65e0cd..020f6da 100644
+--- a/snippets/ef-fit-assistant.liquid
 +++ b/snippets/ef-fit-assistant.liquid
-@@ -0,0 +1,70 @@
+@@ -1,70 +1,71 @@
+-{%- liquid
+-  assign ef_whatsapp_number = whatsapp_number | default: '+56 2 2583 0907'
+-  assign ef_whatsapp_digits = ef_whatsapp_number | replace: '+', '' | replace: ' ', '' | replace: '-', '' | replace: '(', '' | replace: ')', ''
+-  assign ef_heading = fit_heading | default: '¿Aún tienes dudas con la medida o el lado?'
+-  assign ef_body = fit_body | default: 'Envíanos una foto de tu sofá por WhatsApp y te ayudamos a confirmar el modelo antes de comprar.'
+-  assign ef_main_range = main_range | default: '180–370 cm'
+-  assign ef_chaise_range = chaise_range | default: '100–180 cm'
+-  assign ef_placement = placement | default: 'pdp_below_primary_cta'
+-  assign ef_product_url = shop.url | append: product.url
+-  assign ef_variant = product.selected_or_first_available_variant
+-  capture ef_whatsapp_message
+-    echo 'Hola, tengo dudas sobre el lado o la medida de '
+-    echo product.title
+-    echo ': '
+-    echo ef_product_url
+-    echo '. ¿Me ayudan a confirmar el modelo antes de comprar?'
+-  endcapture
+--%}
+-
+-<aside class="ef-fit-assistant" aria-label="Ayuda antes de comprar">
+-  <p class="ef-fit-assistant__eyebrow">Ayuda antes de comprar</p>
+-  <h3 class="ef-fit-assistant__heading">{{ ef_heading | escape }}</h3>
+-  <p class="ef-fit-assistant__body">{{ ef_body | escape }}</p>
+-
 +{%- liquid
 +  assign ef_whatsapp_number = whatsapp_number | default: '+56 2 2583 0907'
 +  assign ef_whatsapp_digits = ef_whatsapp_number | replace: '+', '' | replace: ' ', '' | replace: '-', '' | replace: '(', '' | replace: ')', ''
 +  assign ef_heading = fit_heading | default: '¿Aún tienes dudas con la medida o el lado?'
 +  assign ef_body = fit_body | default: 'Envíanos una foto de tu sofá por WhatsApp y te ayudamos a confirmar el modelo antes de comprar.'
 +  assign ef_main_range = main_range | default: '180–370 cm'
-+  assign ef_chaise_range = chaise_range | default: '100–170 cm'
 +  assign ef_placement = placement | default: 'pdp_below_primary_cta'
 +  assign ef_product_url = shop.url | append: product.url
 +  assign ef_variant = product.selected_or_first_available_variant
@@ -104,10 +217,54 @@ index 0000000..b65e0cd
 +  <h3 class="ef-fit-assistant__heading">{{ ef_heading | escape }}</h3>
 +  <p class="ef-fit-assistant__body">{{ ef_body | escape }}</p>
 +
-+  <ul class="ef-fit-assistant__measurements" aria-label="Rangos de medidas compatibles">
-+    <li class="ef-fit-assistant__measurement">Tramo principal: {{ ef_main_range | escape }}</li>
-+    <li class="ef-fit-assistant__measurement">Chaise longue: {{ ef_chaise_range | escape }}</li>
-+  </ul>
+   <ul class="ef-fit-assistant__measurements" aria-label="Rangos de medidas compatibles">
+     <li class="ef-fit-assistant__measurement">Tramo principal: {{ ef_main_range | escape }}</li>
+-    <li class="ef-fit-assistant__measurement">Chaise longue: {{ ef_chaise_range | escape }}</li>
+   </ul>
+ 
+-  <a
+-    class="ef-fit-assistant__cta"
+-    href="https://wa.me/{{ ef_whatsapp_digits | escape }}?text={{ ef_whatsapp_message | strip_newlines | strip | url_encode }}"
+-    target="_blank"
+-    rel="noopener"
+-    data-ef-fit-whatsapp
+-    data-product-id="{{ product.id }}"
+-    data-variant-id="{{ ef_variant.id }}"
+-    data-product-handle="{{ product.handle | escape }}"
+-    data-placement="{{ ef_placement | escape }}"
+-  >
+-    Confirmar por WhatsApp
+-  </a>
+-</aside>
+-
+-<script>
+-  (function () {
+-    if (window.__efFitAssistantClickBound) return;
+-    window.__efFitAssistantClickBound = true;
+-
+-    document.addEventListener('click', function (event) {
+-      var origin = event.target;
+-      if (!origin || typeof origin.closest !== 'function') return;
+-
+-      var link = origin.closest('[data-ef-fit-whatsapp]');
+-      if (!link) return;
+-      if (!window.Shopify || !Shopify.analytics || typeof Shopify.analytics.publish !== 'function') return;
+-
+-      var published = Shopify.analytics.publish('eurofunda:fit_whatsapp_click', {
+-        product_id: link.dataset.productId,
+-        variant_id: link.dataset.variantId,
+-        product_handle: link.dataset.productHandle,
+-        placement: link.dataset.placement || 'pdp_below_primary_cta'
+-      });
+-
+-      if (published && typeof published.catch === 'function') {
+-        published.catch(function () {});
+-      }
+-    });
+-  })();
+-</script>
++  <p class="ef-fit-assistant__measurement"><strong>¿Dudas con la medida del chaise longue?</strong></p>
++  <p class="ef-fit-assistant__body">Envíanos una foto y revisamos la compatibilidad antes de comprar.</p>
 +
 +  <a
 +    class="ef-fit-assistant__cta"
@@ -150,870 +307,226 @@ index 0000000..b65e0cd
 +    });
 +  })();
 +</script>
-diff --git a/snippets/ef-purchase-assist-styles.liquid b/snippets/ef-purchase-assist-styles.liquid
-new file mode 100644
-index 0000000..d63f23e
---- /dev/null
-+++ b/snippets/ef-purchase-assist-styles.liquid
-@@ -0,0 +1,199 @@
-+<style>
-+  .ef-purchase-assist,
-+  .ef-purchase-trust,
-+  .ef-side-switch,
-+  .ef-fit-assistant {
-+    --ef-ink: #1f211e;
-+    --ef-muted: #62675f;
-+    --ef-line: #d8d9d4;
-+    --ef-soft: #f5f4ef;
-+    --ef-accent: #26352b;
-+    --ef-focus: #075fcc;
-+    color: var(--ef-ink);
-+    font: inherit;
-+    max-width: 42rem;
-+  }
-+
-+  .ef-purchase-assist {
-+    margin-block: 1rem;
-+  }
-+
-+  .ef-purchase-trust {
-+    background: var(--ef-soft);
-+    border-radius: 0.625rem;
-+    color: var(--ef-muted);
-+    margin-block: 0 1.125rem;
-+    padding: 0.75rem 0.875rem;
-+  }
-+
-+  .ef-purchase-trust__line {
-+    font-size: 0.875rem;
-+    line-height: 1.5;
-+    margin: 0;
-+  }
-+
-+  .ef-side-switch {
-+    border: 0;
-+    margin: 1rem 0 0;
-+    min-inline-size: 0;
-+    padding: 0;
-+  }
-+
-+  .ef-purchase-assist .ef-side-switch {
-+    margin-block-start: 0;
-+  }
-+
-+  .ef-side-switch__legend {
-+    display: block;
-+    inline-size: 100%;
-+    margin-block-end: 0.75rem;
-+    padding: 0;
-+  }
-+
-+  .ef-side-switch__eyebrow,
-+  .ef-fit-assistant__eyebrow {
-+    color: var(--ef-muted);
-+    display: block;
-+    font-size: 0.75rem;
-+    font-weight: 700;
-+    letter-spacing: 0.08em;
-+    line-height: 1.3;
-+    margin: 0 0 0.25rem;
-+    text-transform: uppercase;
-+  }
-+
-+  .ef-side-switch__question {
-+    display: block;
-+    font-size: 1rem;
-+    font-weight: 650;
-+    line-height: 1.4;
-+  }
-+
-+  .ef-side-switch__options {
-+    display: grid;
-+    gap: 0.625rem;
-+    grid-template-columns: repeat(2, minmax(0, 1fr));
-+  }
-+
-+  .ef-side-switch__card {
-+    align-items: center;
-+    background: #ffffff;
-+    border: 1px solid var(--ef-line);
-+    border-radius: 0.75rem;
-+    color: var(--ef-ink);
-+    display: grid;
-+    gap: 0.25rem;
-+    justify-items: center;
-+    min-height: 7.75rem;
-+    padding: 0.75rem;
-+    text-align: center;
-+    text-decoration: none;
-+  }
-+
-+  .ef-side-switch__card--active {
-+    background: var(--ef-soft);
-+    border-color: var(--ef-accent);
-+    box-shadow: inset 0 0 0 1px var(--ef-accent);
-+  }
-+
-+  .ef-side-switch__card--unavailable {
-+    cursor: not-allowed;
-+  }
-+
-+  .ef-side-switch__card:focus-visible,
-+  .ef-fit-assistant__cta:focus-visible {
-+    outline: 3px solid var(--ef-focus);
-+    outline-offset: 3px;
-+  }
-+
-+  .ef-side-switch__label {
-+    font-size: 0.9375rem;
-+    font-weight: 700;
-+  }
-+
-+  .ef-side-switch__diagram {
-+    fill: none;
-+    height: 2.75rem;
-+    stroke: currentColor;
-+    stroke-linecap: round;
-+    stroke-linejoin: round;
-+    stroke-width: 2;
-+    width: 4.75rem;
-+  }
-+
-+  .ef-side-switch__status {
-+    color: var(--ef-muted);
-+    font-size: 0.75rem;
-+    line-height: 1.2;
-+  }
-+
-+  .ef-side-switch__note {
-+    color: var(--ef-muted);
-+    font-size: 0.8125rem;
-+    line-height: 1.45;
-+    margin: 0.625rem 0 0;
-+  }
-+
-+  .ef-fit-assistant {
-+    background: var(--ef-soft);
-+    border: 1px solid var(--ef-line);
-+    border-radius: 0.875rem;
-+    margin-block-start: 1.25rem;
-+    padding: 1rem;
-+  }
-+
-+  .ef-fit-assistant__heading {
-+    font-size: 1.125rem;
-+    line-height: 1.35;
-+    margin: 0 0 0.5rem;
-+  }
-+
-+  .ef-fit-assistant__body {
-+    color: var(--ef-muted);
-+    font-size: 0.9375rem;
-+    line-height: 1.5;
-+    margin: 0;
-+  }
-+
-+  .ef-fit-assistant__measurements {
-+    display: grid;
-+    gap: 0.25rem;
-+    list-style: none;
-+    margin: 0.75rem 0;
-+    padding: 0;
-+  }
-+
-+  .ef-fit-assistant__measurement {
-+    font-size: 0.875rem;
-+    line-height: 1.45;
-+  }
-+
-+  .ef-fit-assistant__cta {
-+    align-items: center;
-+    background: transparent;
-+    border: 1px solid var(--ef-accent);
-+    border-radius: 0.5rem;
-+    color: var(--ef-accent);
-+    display: inline-flex;
-+    font-size: 0.9375rem;
-+    font-weight: 700;
-+    justify-content: center;
-+    min-height: 2.75rem;
-+    padding: 0.625rem 1rem;
-+    text-decoration: none;
-+  }
-+
-+  .ef-fit-assistant__cta:hover {
-+    background: #e7e9e3;
-+  }
-+
-+  @media (min-width: 48rem) {
-+    .ef-fit-assistant {
-+      padding: 1.125rem 1.25rem;
-+    }
-+
-+    .ef-fit-assistant__measurements {
-+      grid-template-columns: repeat(2, minmax(0, 1fr));
-+    }
-+  }
-+</style>
-diff --git a/snippets/ef-purchase-trust.liquid b/snippets/ef-purchase-trust.liquid
-new file mode 100644
-index 0000000..35492ab
---- /dev/null
-+++ b/snippets/ef-purchase-trust.liquid
-@@ -0,0 +1,7 @@
-+{%- liquid
-+  assign ef_trust_text = trust_text | default: 'Hasta 6 cuotas sin interés · Envío gratis sobre $80.000 en Chile continental · 1 año por fallas de fabricación · 10 días de satisfacción según condiciones.'
-+-%}
-+
-+<div class="ef-purchase-trust" aria-label="Pago, despacho y garantías">
-+  <p class="ef-purchase-trust__line">{{ ef_trust_text | escape }}</p>
-+</div>
-diff --git a/snippets/ef-side-switch.liquid b/snippets/ef-side-switch.liquid
-new file mode 100644
-index 0000000..5acc195
---- /dev/null
-+++ b/snippets/ef-side-switch.liquid
-@@ -0,0 +1,149 @@
-+{%- liquid
-+  assign ef_current_side = current_side | default: 'right'
-+  assign ef_right_label = right_label | default: 'Derecho'
-+  assign ef_left_label = left_label | default: 'Izquierdo'
-+  assign ef_opposite_label = opposite_label
-+  assign ef_opposite_url = opposite_url
-+  assign ef_current_relative_url = product.url
-+  assign ef_current_absolute_url = shop.url | append: product.url
-+  assign ef_variant = product.selected_or_first_available_variant
-+  assign ef_placement = placement | default: 'pdp_purchase_area'
-+  assign ef_has_opposite_url = true
-+
-+  if ef_opposite_url == blank or ef_opposite_url == ef_current_relative_url or ef_opposite_url == ef_current_absolute_url
-+    assign ef_has_opposite_url = false
-+  endif
-+
-+  if ef_current_side == 'left'
-+    assign ef_active_label = ef_left_label
-+    assign ef_other_label = ef_opposite_label | default: ef_right_label
-+    assign ef_to_side = 'right'
-+  else
-+    assign ef_current_side = 'right'
-+    assign ef_active_label = ef_right_label
-+    assign ef_other_label = ef_opposite_label | default: ef_left_label
-+    assign ef_to_side = 'left'
-+  endif
-+-%}
-+
-+<fieldset class="ef-side-switch">
-+  <legend class="ef-side-switch__legend">
-+    <span class="ef-side-switch__eyebrow">Elige el lado correcto</span>
-+    <span class="ef-side-switch__question">Mirando el sofá de frente, ¿dónde está el chaise longue?</span>
-+  </legend>
-+
-+  <div class="ef-side-switch__options">
-+    {%- if ef_current_side == 'right' -%}
-+      <div class="ef-side-switch__card ef-side-switch__card--active" aria-current="true">
-+        <span class="ef-side-switch__label">{{ ef_active_label | escape }}</span>
-+        <svg class="ef-side-switch__diagram" viewBox="0 0 96 58" aria-hidden="true" focusable="false">
-+          <path d="M10 14h68a8 8 0 0 1 8 8v25a5 5 0 0 1-5 5H65a5 5 0 0 1-5-5V36H15a5 5 0 0 1-5-5V14Z" />
-+          <path d="M18 20v9h48v15h12V22H18Z" />
-+        </svg>
-+        <span class="ef-side-switch__status">Seleccionado</span>
-+      </div>
-+      {%- if ef_has_opposite_url -%}
-+        <a
-+          class="ef-side-switch__card"
-+          href="{{ ef_opposite_url | escape }}"
-+          aria-label="Cambiar al lado {{ ef_other_label | escape }}"
-+          data-ef-side-switch
-+          data-product-id="{{ product.id }}"
-+          data-variant-id="{{ ef_variant.id }}"
-+          data-from-side="{{ ef_current_side }}"
-+          data-to-side="{{ ef_to_side }}"
-+          data-placement="{{ ef_placement | escape }}"
-+          data-target-url="{{ ef_opposite_url | escape }}"
-+        >
-+          <span class="ef-side-switch__label">{{ ef_other_label | escape }}</span>
-+          <svg class="ef-side-switch__diagram" viewBox="0 0 96 58" aria-hidden="true" focusable="false">
-+            <path d="M86 14H18a8 8 0 0 0-8 8v25a5 5 0 0 0 5 5h16a5 5 0 0 0 5-5V36h45a5 5 0 0 0 5-5V14Z" />
-+            <path d="M78 20v9H30v15H18V22h60Z" />
-+          </svg>
-+          <span class="ef-side-switch__status">Ver modelo</span>
-+        </a>
-+      {%- else -%}
-+        <div class="ef-side-switch__card ef-side-switch__card--unavailable" aria-disabled="true">
-+          <span class="ef-side-switch__label">{{ ef_other_label | escape }}</span>
-+          <svg class="ef-side-switch__diagram" viewBox="0 0 96 58" aria-hidden="true" focusable="false">
-+            <path d="M86 14H18a8 8 0 0 0-8 8v25a5 5 0 0 0 5 5h16a5 5 0 0 0 5-5V36h45a5 5 0 0 0 5-5V14Z" />
-+            <path d="M78 20v9H30v15H18V22h60Z" />
-+          </svg>
-+          <span class="ef-side-switch__status">{% if request.design_mode %}Configura la URL{% else %}No disponible{% endif %}</span>
-+        </div>
-+      {%- endif -%}
-+    {%- else -%}
-+      {%- if ef_has_opposite_url -%}
-+        <a
-+          class="ef-side-switch__card"
-+          href="{{ ef_opposite_url | escape }}"
-+          aria-label="Cambiar al lado {{ ef_other_label | escape }}"
-+          data-ef-side-switch
-+          data-product-id="{{ product.id }}"
-+          data-variant-id="{{ ef_variant.id }}"
-+          data-from-side="{{ ef_current_side }}"
-+          data-to-side="{{ ef_to_side }}"
-+          data-placement="{{ ef_placement | escape }}"
-+          data-target-url="{{ ef_opposite_url | escape }}"
-+        >
-+          <span class="ef-side-switch__label">{{ ef_other_label | escape }}</span>
-+          <svg class="ef-side-switch__diagram" viewBox="0 0 96 58" aria-hidden="true" focusable="false">
-+            <path d="M10 14h68a8 8 0 0 1 8 8v25a5 5 0 0 1-5 5H65a5 5 0 0 1-5-5V36H15a5 5 0 0 1-5-5V14Z" />
-+            <path d="M18 20v9h48v15h12V22H18Z" />
-+          </svg>
-+          <span class="ef-side-switch__status">Ver modelo</span>
-+        </a>
-+      {%- else -%}
-+        <div class="ef-side-switch__card ef-side-switch__card--unavailable" aria-disabled="true">
-+          <span class="ef-side-switch__label">{{ ef_other_label | escape }}</span>
-+          <svg class="ef-side-switch__diagram" viewBox="0 0 96 58" aria-hidden="true" focusable="false">
-+            <path d="M10 14h68a8 8 0 0 1 8 8v25a5 5 0 0 1-5 5H65a5 5 0 0 1-5-5V36H15a5 5 0 0 1-5-5V14Z" />
-+            <path d="M18 20v9h48v15h12V22H18Z" />
-+          </svg>
-+          <span class="ef-side-switch__status">{% if request.design_mode %}Configura la URL{% else %}No disponible{% endif %}</span>
-+        </div>
-+      {%- endif -%}
-+      <div class="ef-side-switch__card ef-side-switch__card--active" aria-current="true">
-+        <span class="ef-side-switch__label">{{ ef_active_label | escape }}</span>
-+        <svg class="ef-side-switch__diagram" viewBox="0 0 96 58" aria-hidden="true" focusable="false">
-+          <path d="M86 14H18a8 8 0 0 0-8 8v25a5 5 0 0 0 5 5h16a5 5 0 0 0 5-5V36h45a5 5 0 0 0 5-5V14Z" />
-+          <path d="M78 20v9H30v15H18V22h60Z" />
-+        </svg>
-+        <span class="ef-side-switch__status">Seleccionado</span>
-+      </div>
-+    {%- endif -%}
-+  </div>
-+
-+  <p class="ef-side-switch__note">La orientación se define mirando el sofá de frente.</p>
-+</fieldset>
-+
-+<script>
-+  (function () {
-+    if (window.__efSideSwitchClickBound) return;
-+    window.__efSideSwitchClickBound = true;
-+
-+    document.addEventListener('click', function (event) {
-+      var origin = event.target;
-+      if (!origin || typeof origin.closest !== 'function') return;
-+
-+      var link = origin.closest('[data-ef-side-switch]');
-+      if (!link) return;
-+      if (!window.Shopify || !Shopify.analytics || typeof Shopify.analytics.publish !== 'function') return;
-+
-+      try {
-+        var published = Shopify.analytics.publish('eurofunda:side_switch_click', {
-+          product_id: link.dataset.productId,
-+          variant_id: link.dataset.variantId,
-+          from_side: link.dataset.fromSide,
-+          to_side: link.dataset.toSide,
-+          placement: link.dataset.placement || 'pdp_purchase_area',
-+          target_url: link.dataset.targetUrl || link.href
-+        });
-+
-+        if (published && typeof published.catch === 'function') {
-+          published.catch(function () {});
-+        }
-+      } catch (error) {}
-+    });
-+  })();
-+</script>
-diff --git a/templates/product.eurofunda-demo.json b/templates/product.eurofunda-demo.json
-new file mode 100644
-index 0000000..b613f58
---- /dev/null
-+++ b/templates/product.eurofunda-demo.json
-@@ -0,0 +1,488 @@
-+/*
-+ * ------------------------------------------------------------
-+ * IMPORTANT: The contents of this file are auto-generated.
-+ *
-+ * This file may be updated by the Shopify admin theme editor
-+ * or related systems. Please exercise caution as any changes
-+ * made to this file may be overwritten.
-+ * ------------------------------------------------------------
-+ */{
-+  "sections": {
-+    "main": {
-+      "type": "product-information",
-+      "blocks": {
-+        "disclosures_g9mWze": {
-+          "type": "disclosures",
-+          "name": "t:names.disclosures",
-+          "settings": {
-+            "heading": "Disclosures",
-+            "heading_preset": "h5",
-+            "open_by_default": false,
-+            "icon": "caret",
-+            "disclosure_heading_preset": "h6",
-+            "text_color": "",
-+            "dividers": true,
-+            "divider_color": "{{ settings.color_palette.color2 }}",
-+            "padding-block-start": 0,
-+            "padding-block-end": 0,
-+            "padding-inline-start": 0,
-+            "padding-inline-end": 0
-+          },
-+          "blocks": {}
-+        },
-+        "media-gallery": {
-+          "type": "_product-media-gallery",
-+          "static": true,
-+          "settings": {
-+            "media_presentation": "grid",
-+            "media_columns": "two",
-+            "image_gap": 4,
-+            "large_first_image": false,
-+            "slideshow_controls_style": "counter",
-+            "slideshow_mobile_controls_style": "dots",
-+            "thumbnail_position": "right",
-+            "thumbnail_width": 44,
-+            "thumbnail_radius": 0,
-+            "aspect_ratio": "adapt",
-+            "constrain_to_viewport": true,
-+            "media_fit": "contain",
-+            "media_radius": 0,
-+            "extend_media": false,
-+            "zoom": true,
-+            "video_loop": false,
-+            "hide_variants": true,
-+            "padding-block-start": 0,
-+            "padding-block-end": 0,
-+            "padding-inline-start": 0,
-+            "padding-inline-end": 0
-+          },
-+          "blocks": {}
-+        },
-+        "product-details": {
-+          "type": "_product-details",
-+          "static": true,
-+          "settings": {
-+            "width": "fill",
-+            "custom_width": 100,
-+            "width_mobile": "fill",
-+            "custom_width_mobile": 100,
-+            "height": "fit",
-+            "details_position": "flex-start",
-+            "gap": 28,
-+            "sticky_details_desktop": true,
-+            "background_media": "none",
-+            "background_color": "",
-+            "video_position": "cover",
-+            "background_image_position": "cover",
-+            "border": "none",
-+            "border_width": 1,
-+            "border_opacity": 100,
-+            "border_color": "",
-+            "border_radius": 0,
-+            "padding-block-start": 24,
-+            "padding-block-end": 24,
-+            "padding-inline-start": 0,
-+            "padding-inline-end": 0
-+          },
-+          "blocks": {
-+            "group_icgrde": {
-+              "type": "group",
-+              "name": "t:names.header",
-+              "settings": {
-+                "content_direction": "column",
-+                "vertical_on_mobile": true,
-+                "horizontal_alignment": "flex-start",
-+                "vertical_alignment": "center",
-+                "align_baseline": false,
-+                "horizontal_alignment_flex_direction_column": "flex-start",
-+                "vertical_alignment_flex_direction_column": "center",
-+                "gap": 12,
-+                "width": "fill",
-+                "custom_width": 100,
-+                "width_mobile": "fill",
-+                "custom_width_mobile": 100,
-+                "height": "fit",
-+                "custom_height": 100,
-+                "background_media": "none",
-+                "background_color": "",
-+                "video_position": "cover",
-+                "background_image_position": "cover",
-+                "toggle_overlay": false,
-+                "overlay_color": "#00000026",
-+                "overlay_style": "solid",
-+                "gradient_direction": "to top",
-+                "border": "none",
-+                "border_width": 1,
-+                "border_opacity": 100,
-+                "border_color": "",
-+                "border_radius": 0,
-+                "open_in_new_tab": false,
-+                "placeholder": "",
-+                "padding-block-start": 0,
-+                "padding-block-end": 0,
-+                "padding-inline-start": 0,
-+                "padding-inline-end": 0
-+              },
-+              "blocks": {
-+                "text_xrnftG": {
-+                  "type": "text",
-+                  "name": "t:names.product_title",
-+                  "settings": {
-+                    "text": "<h1>{{ closest.product.title }}</h1>",
-+                    "width": "100%",
-+                    "max_width": "normal",
-+                    "alignment": "left",
-+                    "type_preset": "h3",
-+                    "font": "var(--font-body--family)",
-+                    "font_size": "1rem",
-+                    "line_height": "normal",
-+                    "letter_spacing": "normal",
-+                    "case": "none",
-+                    "wrap": "pretty",
-+                    "text_color": "",
-+                    "background": false,
-+                    "background_color": "#00000026",
-+                    "corner_radius": 0,
-+                    "padding-block-start": 0,
-+                    "padding-block-end": 0,
-+                    "padding-inline-start": 0,
-+                    "padding-inline-end": 0
-+                  },
-+                  "blocks": {}
-+                },
-+                "price_tVjtKg": {
-+                  "type": "price",
-+                  "settings": {
-+                    "show_sale_price_first": true,
-+                    "show_installments": false,
-+                    "show_tax_info": false,
-+                    "type_preset": "paragraph",
-+                    "width": "100%",
-+                    "alignment": "left",
-+                    "font": "var(--font-body--family)",
-+                    "font_size": "1rem",
-+                    "line_height": "normal",
-+                    "letter_spacing": "normal",
-+                    "case": "none",
-+                    "text_color": "",
-+                    "padding-block-start": 4,
-+                    "padding-block-end": 0,
-+                    "padding-inline-start": 0,
-+                    "padding-inline-end": 0
-+                  },
-+                  "blocks": {}
-+                },
-+                "ef_purchase_trust": {
-+                  "type": "ef-purchase-trust",
-+                  "name": "EF purchase trust",
-+                  "settings": {},
-+                  "blocks": {}
-+                }
-+              },
-+              "block_order": [
-+                "text_xrnftG",
-+                "price_tVjtKg",
-+                "ef_purchase_trust"
-+              ]
-+            },
-+            "divider_VJhene": {
-+              "type": "_divider",
-+              "name": "t:names.divider",
-+              "settings": {
-+                "thickness": 1,
-+                "corner_radius": "square",
-+                "divider_color": "{{ settings.color_palette.color2 }}",
-+                "width_percent": 100,
-+                "padding-block-start": 0,
-+                "padding-block-end": 0
-+              },
-+              "blocks": {}
-+            },
-+            "variant_picker_R3rGDr": {
-+              "type": "variant-picker",
-+              "settings": {
-+                "variant_style": "buttons",
-+                "show_swatches": false,
-+                "option_label_text_color": "",
-+                "variant_style_class": "default",
-+                "custom_variant_background": "{{ settings.color_palette.background }}",
-+                "custom_variant_text": "{{ settings.color_palette.foreground }}",
-+                "custom_variant_border": "{{ settings.color_palette.foreground }}",
-+                "selected_variant_style_class": "default",
-+                "custom_selected_variant_background": "{{ settings.color_palette.foreground }}",
-+                "custom_selected_variant_text": "{{ settings.color_palette.background }}",
-+                "custom_selected_variant_border": "{{ settings.color_palette.foreground }}",
-+                "alignment": "left",
-+                "padding-block-start": 0,
-+                "padding-block-end": 0,
-+                "padding-inline-start": 0,
-+                "padding-inline-end": 0
-+              },
-+              "blocks": {}
-+            },
-+            "buy_buttons_eYQEYi": {
-+              "type": "buy-buttons",
-+              "settings": {
-+                "stacking": true,
-+                "text_color": "",
-+                "show_pickup_availability": false,
-+                "gift_card_form": true,
-+                "recipient_button_style": "default",
-+                "recipient_button_background": "{{ settings.color_palette.background }}",
-+                "recipient_button_text": "{{ settings.color_palette.foreground }}",
-+                "recipient_button_border": "{{ settings.color_palette.foreground }}",
-+                "selected_recipient_button_style": "default",
-+                "selected_recipient_button_background": "{{ settings.color_palette.foreground }}",
-+                "selected_recipient_button_text": "{{ settings.color_palette.background }}",
-+                "selected_recipient_button_border": "{{ settings.color_palette.foreground }}",
-+                "input_style": "default",
-+                "input_background_color": "{{ settings.color_palette.background }}",
-+                "input_text_color": "{{ settings.color_palette.foreground }}",
-+                "input_border_color": "{{ settings.color_palette.foreground }}",
-+                "border_width": 1,
-+                "border_radius": 0,
-+                "padding-block-start": 0,
-+                "padding-block-end": 0,
-+                "padding-inline-start": 0,
-+                "padding-inline-end": 0
-+              },
-+              "blocks": {
-+                "quantity": {
-+                  "type": "quantity",
-+                  "static": true,
-+                  "settings": {
-+                    "input_style": "default",
-+                    "input_background_color": "{{ settings.color_palette.background }}",
-+                    "input_text_color": "{{ settings.color_palette.foreground }}",
-+                    "input_border_color": "{{ settings.color_palette.foreground }}",
-+                    "border_width": 1,
-+                    "border_radius": 0
-+                  },
-+                  "blocks": {}
-+                },
-+                "add-to-cart": {
-+                  "type": "add-to-cart",
-+                  "static": true,
-+                  "settings": {
-+                    "style_class": "button",
-+                    "custom_button_background": "{{ settings.color_palette.foreground }}",
-+                    "custom_button_text": "{{ settings.color_palette.background }}",
-+                    "custom_button_border": "{{ settings.color_palette.background }}"
-+                  },
-+                  "blocks": {}
-+                },
-+                "accelerated-checkout": {
-+                  "type": "accelerated-checkout",
-+                  "static": true,
-+                  "settings": {},
-+                  "blocks": {}
-+                }
-+              },
-+              "block_order": []
-+            },
-+            "ef_purchase_assist": {
-+              "type": "ef-purchase-assist",
-+              "name": "EF purchase assist",
-+              "settings": {},
-+              "blocks": {}
-+            },
-+            "text_aEtTtq": {
-+              "type": "text",
-+              "name": "t:names.product_description",
-+              "settings": {
-+                "text": "{{ closest.product.description }}",
-+                "width": "100%",
-+                "max_width": "normal",
-+                "alignment": "left",
-+                "type_preset": "rte",
-+                "font": "var(--font-body--family)",
-+                "font_size": "1rem",
-+                "line_height": "normal",
-+                "letter_spacing": "normal",
-+                "case": "none",
-+                "wrap": "pretty",
-+                "text_color": "",
-+                "background": false,
-+                "background_color": "#00000026",
-+                "corner_radius": 0,
-+                "padding-block-start": 0,
-+                "padding-block-end": 0,
-+                "padding-inline-start": 0,
-+                "padding-inline-end": 0
-+              },
-+              "blocks": {}
-+            }
-+          },
-+          "block_order": [
-+            "group_icgrde",
-+            "divider_VJhene",
-+            "variant_picker_R3rGDr",
-+            "buy_buttons_eYQEYi",
-+            "ef_purchase_assist",
-+            "text_aEtTtq"
-+          ]
-+        }
-+      },
-+      "block_order": [
-+        "disclosures_g9mWze"
-+      ],
-+      "settings": {
-+        "content_width": "content-center-aligned",
-+        "desktop_media_position": "left",
-+        "equal_columns": false,
-+        "limit_details_width": false,
-+        "gap": 48,
-+        "enable_sticky_add_to_cart": true,
-+        "background_color": "{{ settings.color_palette.background }}",
-+        "padding-block-start": 0,
-+        "padding-block-end": 0
-+      }
-+    },
-+    "product_recommendations_qggXJq": {
-+      "type": "product-recommendations",
-+      "blocks": {
-+        "text_cbcgyb": {
-+          "type": "text",
-+          "name": "t:names.header",
-+          "settings": {
-+            "text": "<h3>You may also like </h3>",
-+            "width": "fit-content",
-+            "max_width": "normal",
-+            "alignment": "left",
-+            "type_preset": "h4",
-+            "font": "var(--font-body--family)",
-+            "font_size": "1rem",
-+            "line_height": "normal",
-+            "letter_spacing": "normal",
-+            "case": "none",
-+            "wrap": "pretty",
-+            "text_color": "",
-+            "background": false,
-+            "background_color": "#00000026",
-+            "corner_radius": 0,
-+            "padding-block-start": 0,
-+            "padding-block-end": 0,
-+            "padding-inline-start": 0,
-+            "padding-inline-end": 0
-+          },
-+          "blocks": {}
-+        },
-+        "static-product-card": {
-+          "type": "_product-card",
-+          "name": "t:names.product_card",
-+          "static": true,
-+          "settings": {
-+            "product_card_gap": 8,
-+            "background_color": "",
-+            "border": "none",
-+            "border_width": 1,
-+            "border_opacity": 100,
-+            "border_color": "",
-+            "border_radius": 0,
-+            "padding-block-start": 0,
-+            "padding-block-end": 8,
-+            "padding-inline-start": 0,
-+            "padding-inline-end": 0
-+          },
-+          "blocks": {
-+            "product_card_gallery_DNizbJ": {
-+              "type": "_product-card-gallery",
-+              "name": "t:names.product_card_media",
-+              "settings": {
-+                "image_ratio": "adapt",
-+                "border": "none",
-+                "border_width": 1,
-+                "border_opacity": 100,
-+                "border_color": "",
-+                "border_radius": 0,
-+                "padding-block-start": 0,
-+                "padding-block-end": 0,
-+                "padding-inline-start": 0,
-+                "padding-inline-end": 0
-+              },
-+              "blocks": {}
-+            },
-+            "product_title_M7MJkb": {
-+              "type": "product-title",
-+              "name": "t:names.product_title",
-+              "settings": {
-+                "width": "100%",
-+                "max_width": "normal",
-+                "alignment": "left",
-+                "type_preset": "rte",
-+                "font": "var(--font-body--family)",
-+                "font_size": "1rem",
-+                "line_height": "normal",
-+                "letter_spacing": "normal",
-+                "case": "none",
-+                "wrap": "pretty",
-+                "text_color": "",
-+                "background": false,
-+                "background_color": "#00000026",
-+                "corner_radius": 0,
-+                "padding-block-start": 4,
-+                "padding-block-end": 0,
-+                "padding-inline-start": 0,
-+                "padding-inline-end": 0
-+              },
-+              "blocks": {}
-+            },
-+            "price_gLWgA6": {
-+              "type": "price",
-+              "settings": {
-+                "show_sale_price_first": true,
-+                "show_installments": false,
-+                "show_tax_info": false,
-+                "type_preset": "h6",
-+                "width": "100%",
-+                "alignment": "left",
-+                "font": "var(--font-body--family)",
-+                "font_size": "1rem",
-+                "line_height": "normal",
-+                "letter_spacing": "normal",
-+                "case": "none",
-+                "text_color": "",
-+                "padding-block-start": 0,
-+                "padding-block-end": 0,
-+                "padding-inline-start": 0,
-+                "padding-inline-end": 0
-+              },
-+              "blocks": {}
-+            }
-+          },
-+          "block_order": [
-+            "product_card_gallery_DNizbJ",
-+            "product_title_M7MJkb",
-+            "price_gLWgA6"
-+          ]
-+        }
-+      },
-+      "block_order": [
-+        "text_cbcgyb"
-+      ],
-+      "name": "t:names.product_recommendations",
-+      "settings": {
-+        "product": "{{ closest.product }}",
-+        "recommendation_type": "related",
-+        "layout_type": "grid",
-+        "carousel_on_mobile": false,
-+        "max_products": 4,
-+        "columns": 4,
-+        "mobile_columns": "2",
-+        "columns_gap": 12,
-+        "rows_gap": 24,
-+        "icons_style": "arrow",
-+        "icons_shape": "none",
-+        "section_width": "page-width",
-+        "gap": 28,
-+        "background_color": "{{ settings.color_palette.background }}",
-+        "padding-block-start": 48,
-+        "padding-block-end": 48
-+      }
-+    }
-+  },
-+  "order": [
-+    "main",
-+    "product_recommendations_qggXJq"
-+  ]
+diff --git a/templates/index.json b/templates/index.json
+index 92b9251..cc14dd7 100644
+--- a/templates/index.json
++++ b/templates/index.json
+@@ -15,12 +15,12 @@
+           "type": "text",
+           "name": "t:names.heading",
+           "settings": {
+-            "text": "<p>Browse our latest products</p>",
++            "text": "<p>Ajuste perfecto • Resistente a pelos y arañazos • Lavable</p><h3>Renueva tu sofá y protégelo de mascotas</h3>",
+             "text_color": "{{ settings.color_palette.background }}",
+-            "width": "fit-content",
++            "width": "100%",
+             "max_width": "normal",
+-            "alignment": "left",
+-            "type_preset": "h2",
++            "alignment": "center",
++            "type_preset": "rte",
+             "font": "var(--font-body--family)",
+             "font_size": "1rem",
+             "line_height": "normal",
+@@ -41,7 +41,7 @@
+           "type": "button",
+           "name": "t:names.button",
+           "settings": {
+-            "label": "Shop all",
++            "label": "QUIERO LA MÍA",
+             "link": "shopify://collections/all",
+             "open_in_new_tab": false,
+             "style_class": "button-custom",
+@@ -63,6 +63,7 @@
+       "name": "t:names.hero",
+       "settings": {
+         "media_type_1": "image",
++        "image_1": "shopify://shop_images/MICTUS_023_LSR_03b-web.jpg",
+         "media_type_2": "image",
+         "stack_media_on_mobile": false,
+         "custom_mobile_media": false,
+@@ -77,8 +78,8 @@
+         "horizontal_alignment_flex_direction_column": "center",
+         "vertical_alignment_flex_direction_column": "flex-end",
+         "gap": 24,
+-        "section_width": "page-width",
+-        "section_height": "medium",
++        "section_width": "full-width",
++        "section_height": "large",
+         "section_height_custom": 50,
+         "background_color": "rgba(0,0,0,0)",
+         "toggle_overlay": true,
+@@ -130,7 +131,7 @@
+               "type": "_product-list-text",
+               "name": "t:names.collection_title",
+               "settings": {
+-                "text": "<h3>{{ closest.collection.title }}</h3>",
++                "text": "<h2>SELECCIÓN DE CLIENTES</h2>",
+                 "width": "fit-content",
+                 "max_width": "normal",
+                 "alignment": "left",
+@@ -154,7 +155,7 @@
+               "type": "_product-list-button",
+               "name": "t:names.product_list_button",
+               "settings": {
+-                "label": "View all",
++                "label": "Ver todo",
+                 "open_in_new_tab": false,
+                 "style_class": "link",
+                 "width": "fit-content",
+@@ -261,7 +262,7 @@
+         "collection": "all",
+         "layout_type": "grid",
+         "carousel_on_mobile": false,
+-        "max_products": 8,
++        "max_products": 2,
+         "columns": 4,
+         "mobile_columns": "2",
+         "mobile_card_size": "60cqw",
+@@ -282,4 +283,4 @@
+     "hero_jVaWmY",
+     "product_list_fa6P9H"
+   ]
+-}
+\ No newline at end of file
 +}
+diff --git a/templates/product.eurofunda-demo.json b/templates/product.eurofunda-demo.json
+index b613f58..43a306b 100644
+--- a/templates/product.eurofunda-demo.json
++++ b/templates/product.eurofunda-demo.json
+@@ -270,12 +270,6 @@
+                     "custom_button_border": "{{ settings.color_palette.background }}"
+                   },
+                   "blocks": {}
+-                },
+-                "accelerated-checkout": {
+-                  "type": "accelerated-checkout",
+-                  "static": true,
+-                  "settings": {},
+-                  "blocks": {}
+                 }
+               },
+               "block_order": []
+@@ -286,31 +280,79 @@
+               "settings": {},
+               "blocks": {}
+             },
+-            "text_aEtTtq": {
+-              "type": "text",
+-              "name": "t:names.product_description",
++            "ef_product_details": {
++              "type": "accordion",
++              "name": "Detalles del producto",
+               "settings": {
+-                "text": "{{ closest.product.description }}",
+-                "width": "100%",
+-                "max_width": "normal",
+-                "alignment": "left",
+-                "type_preset": "rte",
+-                "font": "var(--font-body--family)",
+-                "font_size": "1rem",
+-                "line_height": "normal",
+-                "letter_spacing": "normal",
+-                "case": "none",
+-                "wrap": "pretty",
++                "icon": "plus",
++                "dividers": true,
++                "type_preset": "h6",
++                "background_color": "",
+                 "text_color": "",
+-                "background": false,
+-                "background_color": "#00000026",
+-                "corner_radius": 0,
+-                "padding-block-start": 0,
++                "border": "none",
++                "border_width": 1,
++                "border_opacity": 100,
++                "border_radius": 0,
++                "padding-block-start": 8,
+                 "padding-block-end": 0,
+                 "padding-inline-start": 0,
+                 "padding-inline-end": 0
+               },
+-              "blocks": {}
++              "blocks": {
++                "description": {
++                  "type": "_accordion-row",
++                  "settings": { "heading": "Descripción", "open_by_default": true, "icon": "none", "width": 20 },
++                  "blocks": {
++                    "text": {
++                      "type": "text",
++                      "settings": {
++                        "text": "<p>Funda italiana 100% original, hecha en Italia, diseñada para renovar y proteger sofás en L. La microfibra Dark Chocolate combina un tono café intenso y cálido con un acabado mate.</p><ul><li>Fácil de poner y sacar.</li><li>Elástica y ajustable.</li><li>Lavable en máquina.</li><li>Apta para hogares con niños y mascotas.</li></ul>",
++                        "width": "100%", "max_width": "normal", "alignment": "left", "type_preset": "rte", "font": "var(--font-body--family)", "font_size": "1rem", "line_height": "normal", "letter_spacing": "normal", "case": "none", "wrap": "pretty", "text_color": "", "background": false, "background_color": "#00000026", "corner_radius": 0, "padding-block-start": 0, "padding-block-end": 12, "padding-inline-start": 0, "padding-inline-end": 0
++                      }, "blocks": {}
++                    }
++                  }, "block_order": ["text"]
++                },
++                "fabric": {
++                  "type": "_accordion-row",
++                  "settings": { "heading": "Tela", "open_by_default": false, "icon": "none", "width": 20 },
++                  "blocks": {
++                    "text": {
++                      "type": "text",
++                      "settings": {
++                        "text": "<p>100% microfibra hecha en Italia. Su tejido bielástico se estira en longitud y anchura, es suave al tacto, no se arruga ni se deforma y conserva el color. Los tonos pueden variar entre colecciones por la textura y el acabado de cada tejido.</p>",
++                        "width": "100%", "max_width": "normal", "alignment": "left", "type_preset": "rte", "font": "var(--font-body--family)", "font_size": "1rem", "line_height": "normal", "letter_spacing": "normal", "case": "none", "wrap": "pretty", "text_color": "", "background": false, "background_color": "#00000026", "corner_radius": 0, "padding-block-start": 0, "padding-block-end": 12, "padding-inline-start": 0, "padding-inline-end": 0
++                      }, "blocks": {}
++                    }
++                  }, "block_order": ["text"]
++                },
++                "measurements": {
++                  "type": "_accordion-row",
++                  "settings": { "heading": "Medidas", "open_by_default": false, "icon": "none", "width": 20 },
++                  "blocks": {
++                    "text": {
++                      "type": "text",
++                      "settings": {
++                        "text": "<p><strong>Tramo principal: 180–370 cm.</strong></p><p><strong>¿Dudas con la medida del chaise longue?</strong><br>Envíanos una foto y revisamos la compatibilidad antes de comprar.</p><p>La orientación se define mirando el sofá de frente, según la ubicación de la chaise longue. Incluye inserciones antideslizantes para mejorar el ajuste.</p>",
++                        "width": "100%", "max_width": "normal", "alignment": "left", "type_preset": "rte", "font": "var(--font-body--family)", "font_size": "1rem", "line_height": "normal", "letter_spacing": "normal", "case": "none", "wrap": "pretty", "text_color": "", "background": false, "background_color": "#00000026", "corner_radius": 0, "padding-block-start": 0, "padding-block-end": 12, "padding-inline-start": 0, "padding-inline-end": 0
++                      }, "blocks": {}
++                    }
++                  }, "block_order": ["text"]
++                },
++                "care": {
++                  "type": "_accordion-row",
++                  "settings": { "heading": "Cuidado", "open_by_default": false, "icon": "none", "width": 20 },
++                  "blocks": {
++                    "text": {
++                      "type": "text",
++                      "settings": {
++                        "text": "<p>Lavar a máquina a un máximo de 30 °C, sin centrifugado o en ciclo delicado de hasta 400 rpm. No requiere planchado ni vapor.</p>",
++                        "width": "100%", "max_width": "normal", "alignment": "left", "type_preset": "rte", "font": "var(--font-body--family)", "font_size": "1rem", "line_height": "normal", "letter_spacing": "normal", "case": "none", "wrap": "pretty", "text_color": "", "background": false, "background_color": "#00000026", "corner_radius": 0, "padding-block-start": 0, "padding-block-end": 12, "padding-inline-start": 0, "padding-inline-end": 0
++                      }, "blocks": {}
++                    }
++                  }, "block_order": ["text"]
++                }
++              },
++              "block_order": ["description", "fabric", "measurements", "care"]
+             }
+           },
+           "block_order": [
+@@ -319,7 +361,7 @@
+             "variant_picker_R3rGDr",
+             "buy_buttons_eYQEYi",
+             "ef_purchase_assist",
+-            "text_aEtTtq"
++            "ef_product_details"
+           ]
+         }
+       },
+@@ -340,12 +382,13 @@
+     },
+     "product_recommendations_qggXJq": {
+       "type": "product-recommendations",
++      "disabled": true,
+       "blocks": {
+         "text_cbcgyb": {
+           "type": "text",
+           "name": "t:names.header",
+           "settings": {
+-            "text": "<h3>You may also like </h3>",
++            "text": "<h3>También te puede gustar</h3>",
+             "width": "fit-content",
+             "max_width": "normal",
+             "alignment": "left",
