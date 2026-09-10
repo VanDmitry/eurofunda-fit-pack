@@ -1,10 +1,25 @@
 # Eurofunda Fit Pack
 
+## Фактическое состояние
+
+- Shopify development store `eurofunda-cro-demo.myshopify.com` реализован и настроен для Chile / CLP / Español.
+- Неопубликованная preview theme `157730078910` работает на обеих demo PDP.
+- Browser QA пройден на 375 / 390 / 430 / 1440 px; проверены галереи, переключение стороны, WhatsApp, cart drawer и отсутствие horizontal overflow.
+- Live Eurofunda и production theme не изменялись.
+
+Preview:
+
+- [Derecho](https://eurofunda-cro-demo.myshopify.com/products/funda-de-sofa-esquinero-derecho-dark-chocolate?preview_theme_id=157730078910)
+- [Izquierdo](https://eurofunda-cro-demo.myshopify.com/products/funda-de-sofa-esquinero-izquierdo-dark-chocolate?preview_theme_id=157730078910)
+- [Dev-store evidence](evidence/DEVSTORE_REPORT.md)
+
+Это проверенная реализация в Horizon development store, а не в production theme Eurofunda. Перед live обязательна проверка фактической архитектуры production theme и действующего analytics stack.
+
 Локальный набор артефактов для проверки CRO-гипотезы на выбранной PDP: сделать условия покупки заметнее, дать покупателю самостоятельно выбрать сторону L-дивана и оставить WhatsApp как запасной путь при сомнении по стороне или размеру.
 
-Статус: **Implementation package ready for Shopify dev-store integration and theme-specific QA.**
+Статус: **Shopify dev-store implemented; unpublished preview and browser QA passed.**
 
-Пакет не меняет live-сайт, не содержит результатов теста и не считается проверенным в production-теме.
+Пакет не меняет live-сайт и не считается проверенным в production-теме.
 
 ## Состав
 
@@ -71,10 +86,14 @@ GTM
 
 Нормализованные события: `ef_side_switch_click` и `ef_fit_whatsapp_click`.
 
+`side_switch_click` — диагностическое best-effort событие. Навигация по обычной ссылке не блокируется и не задерживается ради доставки telemetry.
+
 Subscriber не взаимодействует автоматически с произвольным GTM из `theme.liquid`: sandbox Custom Pixel изолирован. Перед установкой нужно проверить существующие theme scripts, Customer Events, app pixels и GTM/GA4/Meta configuration. Если события уже отправляются другим путём, нельзя создавать второй event path.
 
 ## Перед live и rollback
 
 До публикации пройти `docs/qa-checklist.md` на обеих парных PDP и проверить product form, variant picker, cart drawer, sticky CTA и GTM Preview. Для отката удалить добавленный Custom Liquid block, theme-specific render/block или standalone section — в зависимости от выбранного варианта — и повторно проверить purchase flow. Подробности находятся в `docs/integration.md`.
 
-До завершения dev-store и theme-specific QA не проверены реальная тема Eurofunda, точные точки placement, Customer Events магазина, текущий analytics stack, cart drawer / variant logic и preview на реальном Shopify store.
+Перед live коммерческие обещания — `cuotas`, порог бесплатной доставки, гарантия и satisfaction period — должны поступать из подтверждённой настройки, metafield или другого согласованного source of truth. Их нельзя независимо поддерживать вручную в нескольких theme snippets и текстовых блоках.
+
+Фактическая production theme Eurofunda, её точки placement, product form / variant logic и production analytics stack остаются отдельным обязательным предметом проверки перед live.

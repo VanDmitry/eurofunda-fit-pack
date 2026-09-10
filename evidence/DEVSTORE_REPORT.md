@@ -1,10 +1,9 @@
 # Shopify dev-store final evidence
 
 - **Status:** PASS
-- **Date:** 2026-09-10
+- **Date:** 2026-09-11
 - **Store:** `eurofunda-cro-demo.myshopify.com`
 - **Theme:** `157730078910` — `Eurofunda CRO Preview 2026-09-10` — **unpublished**
-- **Implementation package HEAD before this uncommitted iteration:** `a377ba924217e9fa37c4e037fbf88bbca771341d`
 
 ## Store settings
 
@@ -29,6 +28,9 @@ All four customer-facing currency format fields use Shopify's supported `{{ amou
 - The Fit Assistant retains `Tramo principal: 180–370 cm` and no longer publishes an exact chaise-longue range. It now says `¿Dudas con la medida del chaise longue?` and `Envíanos una foto y revisamos la compatibilidad antes de comprar.`
 - The `Medidas` accordion uses the same neutral wording.
 - Both demo products retain `templateSuffix: eurofunda-demo`; ordinary paired product URLs work without `view=`.
+- The side selector is a semantic navigation group of ordinary links; the current side remains non-clickable and exposed with `aria-current="page"`.
+- `side_switch_click` remains diagnostic/best-effort: analytics does not block or delay paired-product navigation.
+- The reusable standalone section now renders no product IDs, WhatsApp context or product links when `product` is unavailable; this guard does not change the product-template path.
 
 ## Source-of-truth issue
 
@@ -83,4 +85,3 @@ No theme CSS or DOM was altered to hide the preview toolbar. Clean evidence was 
 - The development store's legal/business entity and address remain in the United States.
 - No checkout payment/test order was completed.
 - Custom Pixel installation was not changed; the existing theme-side event publication remains as previously verified.
-- This iteration is uncommitted and unpushed to Git.

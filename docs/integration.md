@@ -90,6 +90,10 @@
 
 Standalone section сохраняет reusable-композицию `ef-purchase-assist`, но не гарантирует позиции непосредственно внутри product info. Если section оказывается после всей product section, нужен вариант B.
 
+В standalone-пути стили уже подключаются один раз внутри `ef-purchase-assist`. Не добавляйте рядом отдельный render `ef-purchase-assist-styles`. В основном раздельном пути B композиционный snippet не используется, поэтому единственной точкой подключения стилей остаётся явный render в product section.
+
+Если standalone section случайно добавлена в non-product template, storefront ничего не выводит и не формирует пустые product IDs, WhatsApp context или product links. В Theme Editor вместо компонента видна короткая техническая подсказка.
+
 **Rollback:** удалить section из product template в Theme Editor. После проверки отсутствия ссылок на неё можно удалить section-файл и snippets из рабочей копии темы.
 
 ## Трекинг
@@ -114,6 +118,8 @@ GTM
 
 Storefront-код публикует события только по клику и не делает прямой `dataLayer.push()`. Делегированные обработчики регистрируются один раз, поэтому повторный рендер snippets не удваивает publish. Аналитика не отменяет и не задерживает переход по side-switch или WhatsApp URL.
 
+`side_switch_click` — диагностическое best-effort событие: обычная навигация по `href` имеет приоритет и не блокируется ради telemetry. Реализация не использует `sendBeacon` endpoint и не добавляет искусственную задержку перехода.
+
 Минимальная проверка в preview:
 
 1. После загрузки нет ни `eurofunda:side_switch_click`, ни `eurofunda:fit_whatsapp_click`.
@@ -125,6 +131,8 @@ Storefront-код публикует события только по клику
 
 ## До live
 
-Нужны доступы к дубликату темы, product template, main product section, Customer Events / Custom Pixels и GTM preview. Обязательно проверить обе PDP, доступные варианты товара, cart drawer, dynamic checkout, mobile sticky CTA и поведение после смены variant.
+Для production нужны доступы к фактической теме, product template, main product section, Customer Events / Custom Pixels и GTM preview. Обязательно проверить обе PDP, доступные варианты товара, cart drawer, dynamic checkout, mobile sticky CTA и поведение после смены variant.
 
-После этой итерации статус пакета: **Implementation package ready for Shopify dev-store integration and theme-specific QA.** Он не является production-ready до проверки реальной темы и магазина.
+Коммерческие обещания — `cuotas`, shipping threshold, warranty и satisfaction period — перед live должны поступать из подтверждённой настройки, metafield или другого согласованного source of truth. Не следует вручную поддерживать одни и те же значения в нескольких theme snippets или текстовых блоках.
+
+Статус demo: Shopify Horizon development store реализован, неопубликованный preview работает, browser QA пройден. Это не подтверждает production-ready совместимость: перед live нужно проверить фактическую theme architecture Eurofunda и действующий analytics stack.

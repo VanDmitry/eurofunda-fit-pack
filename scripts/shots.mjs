@@ -33,6 +33,8 @@ async function assertStaticPackage() {
     sideSwitch,
     fitAssistant,
     trust,
+    composition,
+    styles,
     mockup
   ] = await Promise.all([
     readProjectFile('.gitignore'),
@@ -44,6 +46,8 @@ async function assertStaticPackage() {
     readProjectFile('snippets/ef-side-switch.liquid'),
     readProjectFile('snippets/ef-fit-assistant.liquid'),
     readProjectFile('snippets/ef-purchase-trust.liquid'),
+    readProjectFile('snippets/ef-purchase-assist.liquid'),
+    readProjectFile('snippets/ef-purchase-assist-styles.liquid'),
     readProjectFile('mockup/index.html')
   ]);
 
@@ -62,11 +66,22 @@ async function assertStaticPackage() {
   assert.doesNotMatch(storefrontLiquid, /dataLayer\s*\.\s*push\s*\(/, 'Storefront Liquid must not push to dataLayer');
 
   assert.match(section, /assign ef_paired_product_url = section\.settings\.paired_product_url/);
+  assert.match(section, /if product != blank/);
+  assert.match(section, /elsif request\.design_mode/);
   assert.doesNotMatch(section, /paired_product_url\s*\|\s*default/, 'Standalone section must not guess a paired URL');
   assert.match(sideSwitch, /ef_opposite_url == blank/);
   assert.match(sideSwitch, /ef_opposite_url == ef_current_relative_url/);
   assert.match(sideSwitch, /ef_opposite_url == ef_current_absolute_url/);
   assert.match(sideSwitch, /request\.design_mode/);
+  assert.match(sideSwitch, /<nav class="ef-side-switch" aria-label="Elegir el lado de la funda">/);
+  assert.match(sideSwitch, /aria-current="page"/);
+  assert.doesNotMatch(sideSwitch, /<\/?(?:fieldset|legend)\b/);
+  assert.doesNotMatch(prototype, /<\/?(?:fieldset|legend)\b/);
+  assert.doesNotMatch(mockup, /<\/?(?:fieldset|legend)\b/);
+
+  assert.equal((composition.match(/render 'ef-purchase-assist-styles'/g) || []).length, 1);
+  assert.doesNotMatch(section, /render 'ef-purchase-assist-styles'/, 'Standalone section must rely on its composition for one style render');
+  assert.match(styles, /\.ef-side-switch__heading/);
 
   const allCustomerCopy = [section, prototype, trust, mockup].join('\n');
   assert.doesNotMatch(allCustomerCopy, /Envío gratis sobre \$80\.000 ·/);
@@ -80,7 +95,11 @@ async function assertStaticPackage() {
   const sidePoint = integration.indexOf("{% render 'ef-side-switch'");
   const fitPoint = integration.indexOf("{% render 'ef-fit-assistant'");
   assert.ok(trustPoint >= 0 && sidePoint > trustPoint && fitPoint > sidePoint, 'Integration docs must show price trust before post-CTA helpers');
-  assert.match(readme, /Implementation package ready for Shopify dev-store integration and theme-specific QA\./);
+  assert.match(readme, /Shopify dev-store implemented; unpublished preview and browser QA passed\./);
+  assert.match(readme, /preview_theme_id=157730078910/);
+  assert.match(readme, /source of truth/);
+  assert.match(integration, /диагностическое best-effort событие/);
+  assert.doesNotMatch(sideSwitch, /preventDefault|sendBeacon|setTimeout/);
   assert.match(integration, /GTM инициализирован внутри Custom Pixel/);
   assert.match(integration, /не взаимодействует автоматически/);
 

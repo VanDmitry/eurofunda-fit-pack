@@ -152,7 +152,7 @@
         padding: 0;
       }
 
-      .ef-side-switch__legend {
+      .ef-side-switch__heading {
         display: block;
         inline-size: 100%;
         margin-block-end: 0.75rem;
@@ -419,11 +419,11 @@
         <button class="ef-product__add" type="button">Agregar al carrito</button>
 
         <div class="ef-purchase-assist">
-          <fieldset class="ef-side-switch">
-            <legend class="ef-side-switch__legend">
+          <nav class="ef-side-switch" aria-label="Elegir el lado de la funda">
+            <div class="ef-side-switch__heading">
               <span class="ef-side-switch__eyebrow">Elige el lado correcto</span>
               <span class="ef-side-switch__question">Mirando el sofá de frente, ¿dónde está el chaise longue?</span>
-            </legend>
+            </div>
 
             <div class="ef-side-switch__options">
               <div class="ef-side-switch__card ef-side-switch__card--active" aria-current="true">
@@ -450,7 +450,7 @@
             </div>
 
             <p class="ef-side-switch__note">La orientación se define mirando el sofá de frente.</p>
-          </fieldset>
+          </nav>
 
           <aside class="ef-fit-assistant" aria-label="Ayuda antes de comprar">
             <p class="ef-fit-assistant__eyebrow">Ayuda antes de comprar</p>

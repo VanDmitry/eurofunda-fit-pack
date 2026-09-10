@@ -59,6 +59,8 @@
 - [ ] Dynamic checkout / accelerated checkout отключён только в demo-шаблоне.
 - [ ] Mobile sticky Add to Cart не перекрывает side switch или WhatsApp CTA.
 - [ ] Компонент не дублируется при повторном рендере section в Theme Editor.
+- [ ] Standalone section на non-product template не выводит product IDs, WhatsApp context или product links.
+- [ ] `ef-purchase-assist-styles` подключён ровно в одной точке выбранного integration path.
 - [ ] В стилях нет глобальных селекторов, CSS leak и `!important`.
 - [ ] Контраст текста и контролов соответствует WCAG AA.
 - [ ] Текст про 1 год и 10 дней не расширяет реальные условия Eurofunda.

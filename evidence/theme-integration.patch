@@ -307,6 +307,61 @@ index b65e0cd..020f6da 100644
 +    });
 +  })();
 +</script>
+diff --git a/snippets/ef-purchase-assist-styles.liquid b/snippets/ef-purchase-assist-styles.liquid
+index d63f23e..c2f02fc 100644
+--- a/snippets/ef-purchase-assist-styles.liquid
++++ b/snippets/ef-purchase-assist-styles.liquid
+@@ -43,7 +43,7 @@
+     margin-block-start: 0;
+   }
+ 
+-  .ef-side-switch__legend {
++  .ef-side-switch__heading {
+     display: block;
+     inline-size: 100%;
+     margin-block-end: 0.75rem;
+diff --git a/snippets/ef-side-switch.liquid b/snippets/ef-side-switch.liquid
+index 5acc195..dd3ebfb 100644
+--- a/snippets/ef-side-switch.liquid
++++ b/snippets/ef-side-switch.liquid
+@@ -26,15 +26,15 @@
+   endif
+ -%}
+ 
+-<fieldset class="ef-side-switch">
+-  <legend class="ef-side-switch__legend">
++<nav class="ef-side-switch" aria-label="Elegir el lado de la funda">
++  <div class="ef-side-switch__heading">
+     <span class="ef-side-switch__eyebrow">Elige el lado correcto</span>
+     <span class="ef-side-switch__question">Mirando el sofá de frente, ¿dónde está el chaise longue?</span>
+-  </legend>
++  </div>
+ 
+   <div class="ef-side-switch__options">
+     {%- if ef_current_side == 'right' -%}
+-      <div class="ef-side-switch__card ef-side-switch__card--active" aria-current="true">
++      <div class="ef-side-switch__card ef-side-switch__card--active" aria-current="page">
+         <span class="ef-side-switch__label">{{ ef_active_label | escape }}</span>
+         <svg class="ef-side-switch__diagram" viewBox="0 0 96 58" aria-hidden="true" focusable="false">
+           <path d="M10 14h68a8 8 0 0 1 8 8v25a5 5 0 0 1-5 5H65a5 5 0 0 1-5-5V36H15a5 5 0 0 1-5-5V14Z" />
+@@ -103,7 +103,7 @@
+           <span class="ef-side-switch__status">{% if request.design_mode %}Configura la URL{% else %}No disponible{% endif %}</span>
+         </div>
+       {%- endif -%}
+-      <div class="ef-side-switch__card ef-side-switch__card--active" aria-current="true">
++      <div class="ef-side-switch__card ef-side-switch__card--active" aria-current="page">
+         <span class="ef-side-switch__label">{{ ef_active_label | escape }}</span>
+         <svg class="ef-side-switch__diagram" viewBox="0 0 96 58" aria-hidden="true" focusable="false">
+           <path d="M86 14H18a8 8 0 0 0-8 8v25a5 5 0 0 0 5 5h16a5 5 0 0 0 5-5V36h45a5 5 0 0 0 5-5V14Z" />
+@@ -115,7 +115,7 @@
+   </div>
+ 
+   <p class="ef-side-switch__note">La orientación se define mirando el sofá de frente.</p>
+-</fieldset>
++</nav>
+ 
+ <script>
+   (function () {
 diff --git a/templates/index.json b/templates/index.json
 index 92b9251..cc14dd7 100644
 --- a/templates/index.json

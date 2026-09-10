@@ -4,49 +4,53 @@
   это зависит от структуры main product section конкретной темы.
 {% endcomment %}
 
-{%- liquid
-  if section.settings.current_side == 'left'
-    assign ef_opposite_label = section.settings.right_label
-  else
-    assign ef_opposite_label = section.settings.left_label
-  endif
-  assign ef_paired_product_url = section.settings.paired_product_url
--%}
+{%- if product != blank -%}
+  {%- liquid
+    if section.settings.current_side == 'left'
+      assign ef_opposite_label = section.settings.right_label
+    else
+      assign ef_opposite_label = section.settings.left_label
+    endif
+    assign ef_paired_product_url = section.settings.paired_product_url
+  -%}
 
-<section class="ef-purchase-assist-section ef-purchase-assist-section--{{ section.id }}" aria-label="Ayuda para elegir la funda">
-  {% render 'ef-purchase-assist',
-    product: product,
-    show_trust: section.settings.show_trust,
-    trust_text: section.settings.trust_text,
-    current_side: section.settings.current_side,
-    opposite_url: ef_paired_product_url,
-    opposite_label: ef_opposite_label,
-    right_label: section.settings.right_label,
-    left_label: section.settings.left_label,
-    whatsapp_number: section.settings.whatsapp_number,
-    fit_heading: section.settings.fit_heading,
-    fit_body: section.settings.fit_body,
-    main_range: section.settings.main_range
-  %}
-</section>
+  <section class="ef-purchase-assist-section ef-purchase-assist-section--{{ section.id }}" aria-label="Ayuda para elegir la funda">
+    {% render 'ef-purchase-assist',
+      product: product,
+      show_trust: section.settings.show_trust,
+      trust_text: section.settings.trust_text,
+      current_side: section.settings.current_side,
+      opposite_url: ef_paired_product_url,
+      opposite_label: ef_opposite_label,
+      right_label: section.settings.right_label,
+      left_label: section.settings.left_label,
+      whatsapp_number: section.settings.whatsapp_number,
+      fit_heading: section.settings.fit_heading,
+      fit_body: section.settings.fit_body,
+      main_range: section.settings.main_range
+    %}
+  </section>
 
-<style>
-  .ef-purchase-assist-section--{{ section.id }} {
-    margin-inline: auto;
-    max-width: var(--page-width, 75rem);
-    padding-inline: 1rem;
-  }
-
-  .ef-purchase-assist-section--{{ section.id }} .ef-purchase-assist {
-    margin-inline: auto;
-  }
-
-  @media (min-width: 48rem) {
+  <style>
     .ef-purchase-assist-section--{{ section.id }} {
-      padding-inline: 2rem;
+      margin-inline: auto;
+      max-width: var(--page-width, 75rem);
+      padding-inline: 1rem;
     }
-  }
-</style>
+
+    .ef-purchase-assist-section--{{ section.id }} .ef-purchase-assist {
+      margin-inline: auto;
+    }
+
+    @media (min-width: 48rem) {
+      .ef-purchase-assist-section--{{ section.id }} {
+        padding-inline: 2rem;
+      }
+    }
+  </style>
+{%- elsif request.design_mode -%}
+  <p role="status">EF Purchase Assist solo se muestra cuando hay un producto disponible.</p>
+{%- endif -%}
 
 {% schema %}
 {
